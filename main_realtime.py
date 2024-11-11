@@ -11,7 +11,7 @@ import os
 # ************************************** ORDER PARAMETERS *******************************************************
 
 volume_value = 1                 # 1000 MAX for stocks. Used only in AU3 (MT5 assigns volume itself)
-risk_reward = 1                     # Risk/Reward ratio (Not used with multiple TP-s)
+risk_reward = 2                     # Risk/Reward ratio (Not used with multiple TP-s)
 stop_loss_offset = 1               # Is added to SL for Shorts and subtracted for Longs (can be equal to spread)
 
 # hardcoded_sr_levels = [('2024-11-02 16:19:00', 69245.00), ('2024-11-02 16:19:00', 69167.00)]  # Example support levels
@@ -23,9 +23,9 @@ clear_csv_before_start = True
 # **************************************************************************************************************
 
 # LIIKURI PATHS
-path_ohlc = 'C:\\Users\\Liikurserv\\AppData\\Roaming\\MetaQuotes\\Terminal\\09FF355D73768D9CE6BDD4EE575EAB09\\MQL5\\Files'
-file = 'OHLCVData_828.csv'
-# LIIKURI PATHS
+path_ohlc = \
+    'C:\\Users\\Liikurserv\\AppData\\Roaming\\MetaQuotes\\Terminal\\1D0E83E0BCAA42603583233CF21A762C\\MQL5\\Files'
+file = 'OHLCVData_475.csv'
 
 # SILLAMAE PATHS
 # path = 'C:\\Users\\Vova deduskin lap\\AppData\\Roaming\\MetaQuotes\\Terminal\\D0E8209F77C8CF37AD8BF550E51FF075\\MQL5\\Files'

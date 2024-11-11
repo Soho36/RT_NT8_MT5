@@ -50,9 +50,7 @@ def send_buy_sell_orders(
                                      + last_candle_close) + stop_loss_offset, 3)
 
         # For MT5:
-        # line_order_parameters = f'{ticker}, Buy, {stop_loss_price}, {take_profit_price}'
-        # For NinjaTrader:
-        line_order_parameters = f'Buy, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
+        line_order_parameters = f'{ticker},Buy,{stop_loss_price},{take_profit_price}'   # MUST BE WITHOUT WHITESPACES
 
         save_order_parameters_to_file(line_order_parameters)    # Located in data_handling_realtime.py
 
@@ -79,9 +77,7 @@ def send_buy_sell_orders(
                                     + stop_loss_offset, 3)
 
         # For MT5:
-        # line_order_parameters = f'{ticker}, Sell, {stop_loss_price}, {take_profit_price}'
-        # For NinjaTrader:
-        line_order_parameters = f'Sell, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
+        line_order_parameters = f'{ticker},Sell,{stop_loss_price},{take_profit_price}'  # MUST BE WITHOUT WHITESPACES
 
         save_order_parameters_to_file(line_order_parameters)    # Located in data_handling_realtime.py
 
