@@ -92,7 +92,8 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
     (
         over_under_counter,
         s_signal,
-        n_index
+        n_index,
+        t_price
     ) = level_rejection_signals(
         output_df_with_levels,
         sr_levels,
@@ -118,6 +119,7 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         b_s_flag,
         s_s_flag,
     ) = send_buy_sell_orders(
+        t_price,
         l_signal,
         s_signal,
         n_index,

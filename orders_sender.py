@@ -15,6 +15,7 @@ def last_candle_ohlc(output_df_with_levels):
 
 
 def send_buy_sell_orders(
+        t_price,
         last_signal,
         s_signal,
         n_index,
@@ -44,13 +45,13 @@ def send_buy_sell_orders(
 
         # ORDER PARAMETERS
         stop_loss_price = round(last_candle_low - stop_loss_offset, 3)
-        take_profit_price = round((((last_candle_close - stop_loss_price) * 1)  # R/R hardcoded
-                                   + last_candle_close) + stop_loss_offset, 3)
-        take_profit_price_2 = round((((last_candle_close - stop_loss_price) * 3)    # R/R hardcoded
-                                     + last_candle_close) + stop_loss_offset, 3)
+        take_profit_price = round((((last_candle_high - stop_loss_price) * 1)  # R/R hardcoded
+                                   + last_candle_high) + stop_loss_offset, 3)
+        take_profit_price_2 = round((((last_candle_high - stop_loss_price) * 3)    # R/R hardcoded
+                                     + last_candle_high) + stop_loss_offset, 3)
 
         # For MT5:
-        line_order_parameters = f'{ticker},Buy,{stop_loss_price},{take_profit_price}'   # MUST BE WITHOUT WHITESPACES
+        line_order_parameters = f'{ticker},Buy,{t_price},{stop_loss_price},{take_profit_price}'   # NO WHITESPACES
 
         save_order_parameters_to_file(line_order_parameters)    # Located in data_handling_realtime.py
 
@@ -71,13 +72,14 @@ def send_buy_sell_orders(
 
         # ORDER PARAMETERS
         stop_loss_price = round(last_candle_high + stop_loss_offset)
-        take_profit_price = round((last_candle_close - ((stop_loss_price - last_candle_close) * 1))  # R/R hardcoded
+        take_profit_price = round((last_candle_low - ((stop_loss_price - last_candle_low) * 1))  # R/R hardcoded
                                   + stop_loss_offset, 3)
-        take_profit_price_2 = round((last_candle_close - ((stop_loss_price - last_candle_close) * 3))   # R/R hardcoded
-                                    + stop_loss_offset, 3)
+
+        # take_profit_price_2 = round((last_candle_low - ((stop_loss_price - last_candle_low) * 3))   # R/R hardcoded
+        #                             + stop_loss_offset, 3)
 
         # For MT5:
-        line_order_parameters = f'{ticker},Sell,{stop_loss_price},{take_profit_price}'  # MUST BE WITHOUT WHITESPACES
+        line_order_parameters = f'{ticker},Sell,{t_price},{stop_loss_price},{take_profit_price}'  # NO WHITESPACES
 
         save_order_parameters_to_file(line_order_parameters)    # Located in data_handling_realtime.py
 
