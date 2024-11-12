@@ -67,6 +67,7 @@ def level_rejection_signals(
             f"+ s_signal: {ss_signal}\n"
             "++++++++++++++++++++++++++"
         )
+        print('-----------------------------------------------------------------------------------------------------')
         return ss_signal, nn_index     # RETURNS SIGNAL FOR send_buy_sell_orders()
 
     sr_level_columns = output_df_with_levels.columns[8:]  # Assuming SR level columns start from the 8th column onwards
@@ -98,7 +99,7 @@ def level_rejection_signals(
                                 # Over-Under condition met for short
                                 level_signal_count[level_column] += 1
                                 level_interaction_signal_time = current_candle_time
-
+                                print('-------------------------------------------------------------------------------')
                                 print(f"▲▼ Short: 'Over-under' condition met at index {index}, "
                                       f"Time: {current_candle_time}, "
                                       f"SR level: {current_sr_level}")
@@ -273,7 +274,7 @@ def level_rejection_signals(
                             # Over condition met for short
                             level_signal_count[level_column] += 1
                             level_interaction_signal_time = current_candle_time
-
+                            print('-------------------------------------------------------------------------------')
                             print(f"▼ Short: 'Under' condition met at index {index}, "
                                   f"Time: {current_candle_time}, "
                                   f"SR level: {current_sr_level}")
@@ -444,6 +445,7 @@ def level_rejection_signals(
                                 # Over-Under condition met for long
                                 level_signal_count[level_column] += 1
                                 level_interaction_signal_time = current_candle_time
+                                print('-------------------------------------------------------------------------------')
                                 print(f"▼▲ Long: 'Under-over' condition met at index {index}, "
                                       f"Time: {current_candle_time}, "
                                       f"SR level: {current_sr_level}")
@@ -607,7 +609,7 @@ def level_rejection_signals(
                                 # Under condition met for long
                                 level_signal_count[level_column] += 1
                                 level_interaction_signal_time = current_candle_time
-
+                                print('-------------------------------------------------------------------------------')
                                 print(f"▲ Long: 'Over' condition met at index {index}, "
                                       f"Time: {current_candle_time}, "
                                       f"SR level: {current_sr_level}")
