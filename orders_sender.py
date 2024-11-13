@@ -52,6 +52,7 @@ def send_buy_sell_orders(
 
         # For MT5:
         line_order_parameters = f'{ticker},Buy,{t_price},{stop_loss_price},{take_profit_price}'   # NO WHITESPACES
+        print('line_order_parameters: ', line_order_parameters)
 
         save_order_parameters_to_file(line_order_parameters)    # Located in data_handling_realtime.py
 
@@ -71,7 +72,7 @@ def send_buy_sell_orders(
         print('▼ ▼ ▼ Sell order has been sent to MT5! ▼ ▼ ▼'.upper())
 
         # ORDER PARAMETERS
-        stop_loss_price = round(last_candle_high + stop_loss_offset)
+        stop_loss_price = round(last_candle_high + stop_loss_offset, 3)
         take_profit_price = round((last_candle_low - ((stop_loss_price - last_candle_low) * 1))  # R/R hardcoded
                                   + stop_loss_offset, 3)
 
@@ -80,7 +81,7 @@ def send_buy_sell_orders(
 
         # For MT5:
         line_order_parameters = f'{ticker},Sell,{t_price},{stop_loss_price},{take_profit_price}'  # NO WHITESPACES
-
+        print('line_order_parameters: ', line_order_parameters)
         save_order_parameters_to_file(line_order_parameters)    # Located in data_handling_realtime.py
 
         sell_signal = False  # Set flag to False to prevent new order sending on each loop iteration
