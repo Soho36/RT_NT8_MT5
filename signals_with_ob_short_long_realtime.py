@@ -273,7 +273,7 @@ def level_rejection_signals(
                                                 side,
                                                 signal
                                             )
-                                            # break
+                                            break
                                             # subsequent_index = next_index
                                             # time_diff = (next_candle_after_ob_time -
                                             #              pd.to_datetime(
@@ -472,6 +472,7 @@ def level_rejection_signals(
                                             side,
                                             signal
                                         )
+
                                         subsequent_index = next_index
                                         time_diff = (next_candle_after_ob_time -
                                                      pd.to_datetime(
@@ -488,7 +489,7 @@ def level_rejection_signals(
                                                 trace
                                         ):
                                             break  # Exit the loop if time limit is exceeded
-                                # break  # Exit the level loop once a signal is generated
+                                        break  # Exit the level loop once a signal is generated
 
                     #  ********************************************************************************************
                     #  LONGS LOGICS BEGIN HERE
@@ -662,27 +663,24 @@ def level_rejection_signals(
                                                 side,
                                                 signal
                                             )
-                                            # break
-                                            # subsequent_index = next_index
-                                            # time_diff = (next_candle_after_ob_time -
-                                            #              pd.to_datetime(
-                                            #                  level_interaction_signal_time)).total_seconds() / 60
-                                            #
-                                            # # Check if we've exceeded the maximum waiting time
-                                            # trace = 'Rejection_longs_4'
-                                            # if check_time_limit(
-                                            #         max_time_waiting_for_entry,
-                                            #         next_index,
-                                            #         next_candle_after_ob_time,
-                                            #         level_interaction_signal_time,
-                                            #         time_diff,
-                                            #         trace
-                                            # ):
-                                            #     break  # Exit the loop if time limit is exceeded
 
-                                #     else:
-                                #         break
-                                # break  # Exit the level loop once a signal is generated
+                                            subsequent_index = next_index
+                                            time_diff = (next_candle_after_ob_time -
+                                                         pd.to_datetime(
+                                                             level_interaction_signal_time)).total_seconds() / 60
+
+                                            # Check if we've exceeded the maximum waiting time
+                                            trace = 'Rejection_longs_4'
+                                            if check_time_limit(
+                                                    max_time_waiting_for_entry,
+                                                    next_index,
+                                                    next_candle_after_ob_time,
+                                                    level_interaction_signal_time,
+                                                    time_diff,
+                                                    trace
+                                            ):
+                                                break  # Exit the loop if time limit is exceeded
+                                            break   # Exit the loop if signal generated
 
                     # BR-O LOGIC BEGIN HERE ****************************************************************************
                     # Previous close was below level
@@ -876,8 +874,8 @@ def level_rejection_signals(
                                                     trace
                                             ):
                                                 break  # Exit the loop if time limit is exceeded
-                                #     else:
-                                #         break
+
+                                            break
                                 # break  # Exit the level loop once a signal is generated
 
     return (
