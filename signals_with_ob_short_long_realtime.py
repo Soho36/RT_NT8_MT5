@@ -93,6 +93,7 @@ def level_rejection_signals(
                     # SHORTS LOGICS BEGIN HERE
                     # **************************************************************************************************
                     # REJECTION SHORTS LOGIC:
+                    # Level interaction logic
                     print(f'{index} Analyzing candle at {current_candle_time}')
                     if previous_close is not None and previous_close < current_sr_level:
                         if current_candle_high > current_sr_level:
@@ -112,6 +113,7 @@ def level_rejection_signals(
                                 trade_type = 'rejection'
                                 side = 'short'
 
+                                # OB candle
                                 for subsequent_index in range(index + 1, len(output_df_with_levels)):
 
                                     potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
@@ -130,8 +132,7 @@ def level_rejection_signals(
                                             max_time_waiting_for_entry,
                                             subsequent_index,
                                             potential_ob_time,
-                                            level_interaction_signal_time,
-                                            time_diff,
+                                            level_interaction_signal_time,                                            time_diff,
                                             trace
                                     ):
                                         break   # Exit the loop if time limit is exceeded
