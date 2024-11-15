@@ -44,9 +44,9 @@ def send_buy_sell_orders(
 
             # ORDER PARAMETERS
             stop_loss_price = round(last_candle_low - stop_loss_offset, 3)
-            take_profit_price = round((((last_candle_high - stop_loss_price) * 1)  # R/R hardcoded
+            take_profit_price = round((((last_candle_high - stop_loss_price) * risk_reward)  # R/R hardcoded
                                        + last_candle_high) + stop_loss_offset, 3)
-            take_profit_price_2 = round((((last_candle_high - stop_loss_price) * 3)    # R/R hardcoded
+            take_profit_price_2 = round((((last_candle_high - stop_loss_price) * risk_reward)    # R/R hardcoded
                                          + last_candle_high) + stop_loss_offset, 3)
 
             # For MT5:
@@ -74,7 +74,7 @@ def send_buy_sell_orders(
 
             # Order parameters
             stop_loss_price = round(last_candle_high + stop_loss_offset, 3)
-            take_profit_price = round((last_candle_low - ((stop_loss_price - last_candle_low) * 1))
+            take_profit_price = round((last_candle_low - ((stop_loss_price - last_candle_low) * risk_reward))
                                       + stop_loss_offset, 3)
 
             # Format line for MT5
