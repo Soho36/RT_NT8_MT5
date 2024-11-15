@@ -17,7 +17,7 @@ stop_loss_offset = 1               # Is added to SL for Shorts and subtracted fo
 # hardcoded_sr_levels = [('2024-11-02 16:19:00', 69245.00), ('2024-11-02 16:19:00', 69167.00)]  # Example support levels
 
 level_interactions_threshold = 3
-max_time_waiting_for_entry = 15
+max_time_waiting_for_entry = 60
 
 clear_csv_before_start = True
 # **************************************************************************************************************
@@ -72,7 +72,7 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
 
     # GET LEVELS FROM FILE
     hardcoded_sr_levels = get_levels_from_file(first_date2)
-    print('hardcoded_sr_levels from file: \n', hardcoded_sr_levels)
+    # print('hardcoded_sr_levels from file: \n', hardcoded_sr_levels)
 
     # PRICE LEVELS
     (

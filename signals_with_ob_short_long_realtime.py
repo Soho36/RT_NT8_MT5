@@ -94,7 +94,7 @@ def level_rejection_signals(
                     # **************************************************************************************************
                     # REJECTION SHORTS LOGIC:
                     # Level interaction logic
-                    print(f'{index} Analyzing candle at {current_candle_time}')
+                    # print(f'{index} Analyzing candle at {current_candle_time}')
                     if previous_close is not None and previous_close < current_sr_level:
                         if current_candle_high > current_sr_level:
                             if current_candle_close < current_sr_level:
