@@ -19,7 +19,7 @@ stop_loss_offset = 1               # Is added to SL for Shorts and subtracted fo
 level_interactions_threshold = 3
 max_time_waiting_for_entry = 15
 
-clear_csv_before_start = True
+clear_csv_before_start = False
 # **************************************************************************************************************
 
 # LIIKURI PATHS
@@ -67,7 +67,7 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
     print('\n********************************************************************************************************')
 
     # GET DATAFRAME FROM LOG
-    dataframe_from_log, first_date2 = get_dataframe_from_file()
+    dataframe_from_log, first_date2 = get_dataframe_from_file(max_time_waiting_for_entry)
     # print('\nget_dataframe_from_file: \n', dataframe_from_log[-10:])
 
     # GET LEVELS FROM FILE
@@ -85,7 +85,7 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         dataframe_from_log,
         hardcoded_sr_levels
     )
-    print('\noutput_df_with_levels2: \n', output_df_with_levels[-10:])
+    print('\noutput_df_with_levels2: \n', output_df_with_levels)   # [-10:]
 
     # SIGNALS
 

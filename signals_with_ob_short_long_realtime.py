@@ -203,54 +203,6 @@ def level_rejection_signals(
                                         ):
                                             break  # Exit the loop if time limit is exceeded
 
-                                        # THIS IS THE ACTUAL SIGNAL FOR TRADE OPEN
-                                        # if next_candle_after_ob['Low'] < green_candle_low:
-                                        #     print('!!! Stopmarket order triggered !!!')
-
-                                            # # Store the time of the next candle after OB
-                                            # next_candle_after_ob_time = pd.to_datetime(
-                                            #     str(next_candle_after_ob['Date']) + ' '
-                                            #     + str(next_candle_after_ob['Time'])
-                                            # )
-
-                                            # THIS BLOCK IS FOR NEXT AFTER OB ENTRY
-                                            # if next_candle_after_ob['Close'] < current_sr_level:
-                                            #     # signal = -100  # Short signal
-                                            #     signal = f'-100+{next_index}'
-                                            #     trigger_price = next_candle_after_ob['Close']
-                                            #
-                                            #     s_signal, n_index = signal_triggered_output(
-                                            #         next_index,
-                                            #         signal_time,
-                                            #         trigger_price,
-                                            #         trade_type,
-                                            #         side,
-                                            #         signal
-                                            #     )
-                                            #
-                                            #     break
-                                            # else:
-                                            #     print(
-                                            #         f"It closed below, but we are not under the level."
-                                            #         f" Checking next candle..."
-                                            #     )
-                                            #     # Calculate time difference between the current potential candle
-                                            #     # and the initial SR level interaction
-                                            #     time_diff = (next_candle_after_ob_time - pd.to_datetime(
-                                            #         level_interaction_signal_time)).total_seconds() / 60
-                                            #
-                                            #     # Check if we've exceeded the maximum waiting time
-                                            #     trace = 'Rejection_shorts_3'
-                                            #     if check_time_limit(
-                                            #             max_time_waiting_for_entry,
-                                            #             subsequent_index,
-                                            #             next_candle_after_ob_time,
-                                            #             level_interaction_signal_time,
-                                            #             time_diff,
-                                            #             trace
-                                            #     ):
-                                            #         break  # Exit the loop if time limit is exceeded
-
                                         if next_candle_after_ob['Close'] > next_candle_after_ob['Open']:
                                             next_candle_after_ob_time = pd.to_datetime(
                                                 str(next_candle_after_ob['Date']) + ' '
@@ -878,6 +830,8 @@ def level_rejection_signals(
 
                                             break
                                 # break  # Exit the level loop once a signal is generated
+                else:
+                    print(f'Level interactions number({level_signal_count}) reached')
 
     return (
             level_signal_count,

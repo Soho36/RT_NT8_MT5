@@ -54,9 +54,17 @@ def leave_only_last_line():     # Clear file before starting the script
                 file.write(lines[-1])  # Write only the first line back to the file
 
 
-def get_dataframe_from_file():
+def get_dataframe_from_file(max_time_waiting_for_entry):
 
-    log_df = pd.read_csv(mt5_logging_file_path, sep=';', encoding='utf-16', engine='python')
+    log_df = pd.read_csv(
+        mt5_logging_file_path,
+        sep=';',
+        encoding='utf-16',
+        engine='python',
+        skiprows=lambda x: x < (
+                sum(1 for _ in open(mt5_logging_file_path, encoding='utf-16')) - max_time_waiting_for_entry - 1
+        )
+    )
     new_column_names = ['Ticker', 'Timeframe', 'Date', 'Time', 'Open', 'High', 'Low', 'Close', 'Volume']
     log_df.columns = new_column_names
     log_df['Datetime'] = pd.to_datetime(log_df['Date'] + ' ' + log_df['Time'], format='ISO8601')
@@ -77,10 +85,10 @@ def get_levels_from_file(first_date2):
 def save_order_parameters_to_file(line_order_parameters):   # Called from orders_sender.py
     with open(buy_sell_signals_for_mt5_filepath_1, 'w', encoding='utf-8') as file:
         file.writelines(line_order_parameters)
-        print('NEW ORDER IS SUCCESSFULLY SAVED TO FILE')
+        print('NEW ORDER IS SUCCESSFULLY SAVED TO FILE_1')
 
     with open(buy_sell_signals_for_mt5_filepath_2, 'w', encoding='utf-8') as file:
         file.writelines(line_order_parameters)
-        print('NEW ORDER IS SUCCESSFULLY SAVED TO FILE')
+        print('NEW ORDER IS SUCCESSFULLY SAVED TO FILE_2')
 
 
