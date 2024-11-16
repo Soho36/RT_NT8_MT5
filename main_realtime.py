@@ -19,7 +19,7 @@ stop_loss_offset = 1               # Is added to SL for Shorts and subtracted fo
 level_interactions_threshold = 3
 max_time_waiting_for_entry = 15
 
-clear_csv_before_start = False
+clear_csv_before_start = True
 # **************************************************************************************************************
 
 # LIIKURI PATHS

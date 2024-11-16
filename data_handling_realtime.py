@@ -61,9 +61,8 @@ def get_dataframe_from_file(max_time_waiting_for_entry):
         sep=';',
         encoding='utf-16',
         engine='python',
-        skiprows=lambda x: x < (
-                sum(1 for _ in open(mt5_logging_file_path, encoding='utf-16')) - max_time_waiting_for_entry - 1
-        )
+        # skiprows=lambda x: x < (sum(1 for _ in open(mt5_logging_file_path, encoding='utf-16')) - max_time_waiting_for_entry - 1
+        # )
     )
     new_column_names = ['Ticker', 'Timeframe', 'Date', 'Time', 'Open', 'High', 'Low', 'Close', 'Volume']
     log_df.columns = new_column_names
@@ -71,14 +70,14 @@ def get_dataframe_from_file(max_time_waiting_for_entry):
     log_df.set_index('Datetime', inplace=True)
     dataframe_from_log = log_df.loc[:, ['Ticker', 'Date', 'Time', 'Open', 'High', 'Low', 'Close']]
     datetime_index = log_df.index
-    first_date = str(datetime_index[0])
+    first_date = str(datetime_index[0])     # Get datetime of the first row of dataframe to pass along with levels
 
     return dataframe_from_log, first_date
 
 
-def get_levels_from_file(first_date2):
+def get_levels_from_file(first_date):
     with open(levels_path, 'r', encoding='utf-8') as file:
-        levels = [(first_date2, float(line.strip())) for line in file]
+        levels = [(first_date, float(line.strip())) for line in file]
     return levels
 
 
