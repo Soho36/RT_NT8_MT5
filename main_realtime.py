@@ -11,7 +11,7 @@ import os
 # ************************************** ORDER PARAMETERS *******************************************************
 
 volume_value = 1                 # 1000 MAX for stocks. Used only in AU3 (MT5 assigns volume itself)
-risk_reward = 2                     # Risk/Reward ratio (Not used with multiple TP-s)
+risk_reward = 1                     # Risk/Reward ratio (Not used with multiple TP-s)
 stop_loss_offset = 1               # Is added to SL for Shorts and subtracted for Longs (can be equal to spread)
 
 # hardcoded_sr_levels = [('2024-11-02 16:19:00', 69245.00), ('2024-11-02 16:19:00', 69167.00)]  # Example support levels
