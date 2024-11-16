@@ -45,7 +45,7 @@ levels_path = (
 #      )
 
 
-def leave_only_last_line():
+def leave_only_last_line():     # Clear file before starting the script
     with open(mt5_logging_file_path, 'r', encoding='utf-16') as file:
         lines = file.readlines()
         # Check if there's at least one line to keep
