@@ -18,6 +18,7 @@ stop_loss_offset = 1               # Is added to SL for Shorts and subtracted fo
 
 level_interactions_threshold = 3
 max_time_waiting_for_entry = 15
+reverse_trades = False
 
 clear_csv_before_start = True
 # **************************************************************************************************************
@@ -52,7 +53,7 @@ class CsvChangeHandler(FileSystemEventHandler):
 
     def on_modified(self, event):
         global buy_signal_flag, sell_signal_flag, last_signal
-        print(f"File modified: {event.src_path}")  # This should print on any modification
+        # print(f"File modified: {event.src_path}")  # This should print on any modification
         if not event.src_path == os.path.join(path_ohlc, file):  # CSV file path
             return
         print("CSV file updated; triggering function calls...")
@@ -131,6 +132,7 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         ticker,
         stop_loss_offset,
         risk_reward,
+        reverse_trades
     )
 
     l_signal = s_signal
