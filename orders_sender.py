@@ -38,7 +38,7 @@ def send_buy_sell_orders(
     # Flag reset logic for enabling new orders after each order processed
     if current_signal != last_signal:
         # If there is unique new signal and flag is True:
-        if current_signal == f'-100+{n_index}' and buy_signal:  # If there is signal and flag is True:
+        if current_signal == f'100+{n_index}' and buy_signal:  # If there is signal and flag is True:
 
             winsound.PlaySound('chord.wav', winsound.SND_FILENAME)
             print()
@@ -68,7 +68,7 @@ def send_buy_sell_orders(
 
     # Flag reset logic for enabling new orders after each order processed
     if current_signal != last_signal:
-        if current_signal == f'100+{n_index}' and sell_signal:
+        if current_signal == f'-100+{n_index}' and sell_signal:
             # Play sound to indicate order sent
             winsound.PlaySound('chord.wav', winsound.SND_FILENAME)
             print()
