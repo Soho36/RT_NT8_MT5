@@ -19,7 +19,7 @@ stop_loss_offset = 1                # Is added to SL for Shorts and subtracted f
 level_interactions_threshold = 3    # Times
 max_time_waiting_for_entry = 5      # Candles
 reverse_trades = False
-level_lifetime_minutes = 3         # Minutes
+level_lifetime_minutes = 60         # Minutes
 
 clear_csv_before_start = True
 # **************************************************************************************************************
@@ -107,7 +107,7 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
 
     # Remove the level which has been hit threshold
 
-    remove_expired_levels(level_lifetime_minutes)
+    remove_expired_levels(level_lifetime_minutes, dataframe_from_log)
 
     # LAST CANDLE OHLC (current OHLC)
     (

@@ -835,7 +835,9 @@ def level_rejection_signals(
                                 #             break
                                 # break  # Exit the level loop once a signal is generated
                 else:
-                    print(f'Level interactions number reached for level {current_sr_level}')
+                    print('-------------------------------------------------------------------------------')
+                    print(f'Level interactions number ({level_interactions_threshold}) reached '
+                          f'for level {current_sr_level}')
 
     return (
             level_signal_count,

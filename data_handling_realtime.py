@@ -86,9 +86,10 @@ def get_levels_from_file():
 
 
 #   Remove level which has reached time threshold from file
-def remove_expired_levels(level_lifetime_minutes):
+def remove_expired_levels(level_lifetime_minutes, dataframe_from_log):
+    # output_df_with_levels = output_df_with_levels.set_index(['Datetime'], inplace=True)
+    current_time = dataframe_from_log.index[-1]  # Timestamp of the last line of dataframe
     updated_levels = []
-    current_time = datetime.datetime.now()  # Current time
 
     with open(levels_path, 'r', encoding='utf-8') as file:
         for line in file:
