@@ -84,6 +84,21 @@ def get_levels_from_file():
     return levels
 
 
+#   Remove level which has reached the threshold from file
+def remove_levels_from_file(level_to_remove):
+    with open(levels_path, 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+
+    with open(levels_path, 'w', encoding='utf-8') as file:
+        # example_level = '2024-11-17 17:16:00, 90542'
+        for line in lines:
+            # Extract level from line
+            line_level = float(line.split(',')[1].strip())
+            # Write back all lines except the one to remove
+            if line_level != level_to_remove:
+                file.write(line)
+
+
 def save_order_parameters_to_file(line_order_parameters):   # Called from orders_sender.py
     with open(buy_sell_signals_for_mt5_filepath_1, 'w', encoding='utf-8') as file:
         file.writelines(line_order_parameters)

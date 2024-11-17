@@ -1,4 +1,4 @@
-from data_handling_realtime import get_dataframe_from_file, get_levels_from_file, leave_only_last_line
+from data_handling_realtime import get_dataframe_from_file, get_levels_from_file, leave_only_last_line, remove_levels_from_file
 from price_levels_manual_realtime import process_levels
 from signals_with_ob_short_long_realtime import level_rejection_signals
 from orders_sender import last_candle_ohlc, send_buy_sell_orders
@@ -10,17 +10,17 @@ import os
 
 # ************************************** ORDER PARAMETERS *******************************************************
 
-volume_value = 1                 # 1000 MAX for stocks. Used only in AU3 (MT5 assigns volume itself)
+volume_value = 1                    # 1000 MAX for stocks. Used only in AU3 (MT5 assigns volume itself)
 risk_reward = 1                     # Risk/Reward ratio (Not used with multiple TP-s)
-stop_loss_offset = 1               # Is added to SL for Shorts and subtracted for Longs (can be equal to spread)
+stop_loss_offset = 1                # Is added to SL for Shorts and subtracted for Longs (can be equal to spread)
 
 # hardcoded_sr_levels = [('2024-11-02 16:19:00', 69245.00), ('2024-11-02 16:19:00', 69167.00)]  # Example support levels
 
-level_interactions_threshold = 3
-max_time_waiting_for_entry = 15
+level_interactions_threshold = 3    # Times
+max_time_waiting_for_entry = 5      # Candles
 reverse_trades = False
 
-clear_csv_before_start = False
+clear_csv_before_start = True
 # **************************************************************************************************************
 
 # LIIKURI PATHS
@@ -94,14 +94,21 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         over_under_counter,
         s_signal,
         n_index,
-        t_price
+        t_price,
+        levels_to_remove
     ) = level_rejection_signals(
         output_df_with_levels,
         sr_levels,
         level_interactions_threshold,
         max_time_waiting_for_entry
     )
-    # print(f'\n!!!!!s_signal: {s_signal}\n')
+
+    # Remove the level which has been hit threshold
+
+    # remove_levels_from_file(level_to_remove_from_file)
+
+    for level_to_remove_from_file in levels_to_remove:
+        remove_levels_from_file(level_to_remove_from_file)
 
     # LAST CANDLE OHLC (current OHLC)
     (

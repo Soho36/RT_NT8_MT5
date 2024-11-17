@@ -16,6 +16,8 @@ def level_rejection_signals(
     n_index = None
     s_signal = None
     t_price = None
+    level_to_remove_from_file = None
+    levels_to_remove = []  # List to queue levels for deletion
 
     # Create a dictionary to track signal count per level
     level_signal_count = {i: 0 for i in range(1, len(sr_levels) + 1)}
@@ -39,7 +41,7 @@ def level_rejection_signals(
             print(
                 "xxxxxxxxxxxxxxxxx\n"
                 f"x {trce}: Exceeded {m_time_waiting_for_entry}-minute window "
-                f"at index {subs_index}, \n"
+                f"at index {subs_index}, for level {current_sr_level}\n"
                 f"x Level interaction time: {lev_inter_signal_time}, \n"
                 f"x Candle time: {candle_time}, \n"
                 f"x Time diff: {t_diff} minutes\n"
@@ -94,7 +96,7 @@ def level_rejection_signals(
                     # **************************************************************************************************
                     # REJECTION SHORTS LOGIC:
                     # Level interaction logic
-                    print(f'{index} Analyzing candle at {current_candle_time}')
+                    # print(f'{index} Analyzing candle at {current_candle_time}')
                     if previous_close is not None and previous_close < current_sr_level:
                         if current_candle_high > current_sr_level:
                             if current_candle_close < current_sr_level:
@@ -135,6 +137,7 @@ def level_rejection_signals(
                                             level_interaction_signal_time,                                            time_diff,
                                             trace
                                     ):
+                                        levels_to_remove.append(current_sr_level)
                                         break   # Exit the loop if time limit is exceeded
 
                                     print(
@@ -291,6 +294,7 @@ def level_rejection_signals(
                                         time_diff,
                                         trace
                                 ):
+                                    levels_to_remove.append(current_sr_level)
                                     break  # Exit the loop if time limit is exceeded
 
                                 print(
@@ -488,6 +492,7 @@ def level_rejection_signals(
                                             time_diff,
                                             trace
                                     ):
+                                        levels_to_remove.append(current_sr_level)
                                         break  # Exit the loop if time limit is exceeded
 
                                     print(
@@ -677,6 +682,7 @@ def level_rejection_signals(
                                             time_diff,
                                             trace
                                     ):
+                                        levels_to_remove.append(current_sr_level)
                                         break  # Exit the loop if time limit is exceeded
 
                                     print(
@@ -831,11 +837,12 @@ def level_rejection_signals(
                                 #             break
                                 # break  # Exit the level loop once a signal is generated
                 else:
-                    print(f'Level interactions number: {level_signal_count} reached')
+                    print(f'Level interactions number reached for level {current_sr_level}')
 
     return (
             level_signal_count,
             s_signal,
             n_index,
-            t_price
+            t_price,
+            levels_to_remove
     )
