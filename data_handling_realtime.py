@@ -75,9 +75,12 @@ def get_dataframe_from_file(max_time_waiting_for_entry):
     return dataframe_from_log, first_date
 
 
-def get_levels_from_file(first_date):
+def get_levels_from_file():
     with open(levels_path, 'r', encoding='utf-8') as file:
-        levels = [(first_date, float(line.strip())) for line in file]
+        levels = [
+            (line.split(',')[0].strip(), float(line.split(',')[1].strip()))
+            for line in file
+        ]
     return levels
 
 

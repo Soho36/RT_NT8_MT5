@@ -71,7 +71,7 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
     # print('\nget_dataframe_from_file: \n', dataframe_from_log[-10:])
 
     # GET LEVELS FROM FILE
-    hardcoded_sr_levels = get_levels_from_file(first_date2)
+    hardcoded_sr_levels = get_levels_from_file()
     print('hardcoded_sr_levels from file: \n', hardcoded_sr_levels)
 
     # PRICE LEVELS
