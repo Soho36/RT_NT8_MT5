@@ -19,6 +19,7 @@ stop_loss_offset = 1                # Is added to SL for Shorts and subtracted f
 level_interactions_threshold = 3    # Times
 max_time_waiting_for_entry = 5      # Candles
 reverse_trades = False
+delete_levels_after = 60            # Candles
 
 clear_csv_before_start = True
 # **************************************************************************************************************
@@ -86,23 +87,23 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         dataframe_from_log,
         hardcoded_sr_levels
     )
-    print('\noutput_df_with_levels2: \n', output_df_with_levels)   # [-10:]
 
     # SIGNALS
-
     (
         over_under_counter,
         s_signal,
         n_index,
         t_price,
-        levels_to_remove
+        levels_to_remove,
+        candle_counter
     ) = level_rejection_signals(
         output_df_with_levels,
         sr_levels,
         level_interactions_threshold,
         max_time_waiting_for_entry
     )
-
+    print('\noutput_df_with_levels2: \n', output_df_with_levels)  # [-10:]
+    print(f'Candles processed since start: {candle_counter}')
     # Remove the level which has been hit threshold
 
     # remove_levels_from_file(level_to_remove_from_file)
