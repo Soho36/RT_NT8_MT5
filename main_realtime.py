@@ -1,4 +1,4 @@
-from data_handling_realtime import get_dataframe_from_file, get_levels_from_file, leave_only_last_line, remove_levels_from_file
+from data_handling_realtime import get_dataframe_from_file, get_levels_from_file, leave_only_last_line, remove_expired_levels
 from price_levels_manual_realtime import process_levels
 from signals_with_ob_short_long_realtime import level_rejection_signals
 from orders_sender import last_candle_ohlc, send_buy_sell_orders
@@ -19,7 +19,7 @@ stop_loss_offset = 1                # Is added to SL for Shorts and subtracted f
 level_interactions_threshold = 3    # Times
 max_time_waiting_for_entry = 5      # Candles
 reverse_trades = False
-delete_levels_after = 60            # Candles
+level_lifetime_minutes = 3         # Minutes
 
 clear_csv_before_start = True
 # **************************************************************************************************************
@@ -87,7 +87,7 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         dataframe_from_log,
         hardcoded_sr_levels
     )
-
+    print('\noutput_df_with_levels2: \n', output_df_with_levels)  # [-10:]
     # SIGNALS
     (
         over_under_counter,
@@ -102,14 +102,12 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         level_interactions_threshold,
         max_time_waiting_for_entry
     )
-    print('\noutput_df_with_levels2: \n', output_df_with_levels)  # [-10:]
+
     print(f'Candles processed since start: {candle_counter}')
+
     # Remove the level which has been hit threshold
 
-    # remove_levels_from_file(level_to_remove_from_file)
-
-    for level_to_remove_from_file in levels_to_remove:
-        remove_levels_from_file(level_to_remove_from_file)
+    remove_expired_levels(level_lifetime_minutes)
 
     # LAST CANDLE OHLC (current OHLC)
     (

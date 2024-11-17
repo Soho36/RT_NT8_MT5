@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime
 
 log_file_reading_interval = 1       # File reading interval (sec)
 
@@ -84,19 +85,28 @@ def get_levels_from_file():
     return levels
 
 
-#   Remove level which has reached the threshold from file
-def remove_levels_from_file(level_to_remove):
-    with open(levels_path, 'r', encoding='utf-8') as file:
-        lines = file.readlines()
+#   Remove level which has reached time threshold from file
+def remove_expired_levels(level_lifetime_minutes):
+    updated_levels = []
+    current_time = datetime.datetime.now()  # Current time
 
+    with open(levels_path, 'r', encoding='utf-8') as file:
+        for line in file:
+            timestamp_str, level = line.strip().split(',')
+            timestamp = datetime.datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+
+            # Calculate the time difference
+            time_diff = (current_time - timestamp).total_seconds() / 60  # Convert to minutes
+
+            # Keep the level if it is still within its lifetime
+            if time_diff < level_lifetime_minutes:
+                updated_levels.append(line)
+            else:
+                print(f"Removing expired level: {timestamp_str}, {level.strip()}")
+
+    # Write the remaining levels back to the file
     with open(levels_path, 'w', encoding='utf-8') as file:
-        # example_level = '2024-11-17 17:16:00, 90542'
-        for line in lines:
-            # Extract level from line
-            line_level = float(line.split(',')[1].strip())
-            # Write back all lines except the one to remove
-            if line_level != level_to_remove:
-                file.write(line)
+        file.writelines(updated_levels)
 
 
 def save_order_parameters_to_file(line_order_parameters):   # Called from orders_sender.py
