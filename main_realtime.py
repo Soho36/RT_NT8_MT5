@@ -20,7 +20,7 @@ level_interactions_threshold = 3
 max_time_waiting_for_entry = 15
 reverse_trades = False
 
-clear_csv_before_start = True
+clear_csv_before_start = False
 # **************************************************************************************************************
 
 # LIIKURI PATHS
