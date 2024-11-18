@@ -15,7 +15,7 @@ def last_candle_ohlc(output_df_with_levels):
 
 
 def send_buy_sell_orders(
-        t_price,
+        stop_market_price,
         last_signal,
         current_signal,
         n_index,
@@ -52,10 +52,11 @@ def send_buy_sell_orders(
                                          + last_candle_high) + stop_loss_offset, 3)
 
             # For MT5:
-            line_order_parameters = f'{ticker},Buy,{t_price},{stop_loss_price},{take_profit_price}'  # NO WHITESPACES
-            print('line_order_parameters: ', line_order_parameters)
+            line_order_parameters_mt5 = f'{ticker},Buy,{stop_market_price},{stop_loss_price},{take_profit_price}'  # NO WHITESPACES
+            # line_order_parameters_nt8 = f'Buy, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
+            print('line_order_parameters_mt5: ', line_order_parameters_mt5)
 
-            save_order_parameters_to_file(line_order_parameters)  # Located in data_handling_realtime.py
+            save_order_parameters_to_file(line_order_parameters_mt5)  # Located in data_handling_realtime.py
             # Reset buy_signal flag after processing order to allow the next unique signal
             buy_signal = False  # Prevent repeated order for the same signal
         # Reset flags here if a new unique signal occurs in consecutive candles
@@ -80,9 +81,9 @@ def send_buy_sell_orders(
                                       + stop_loss_offset, 3)
 
             # Format line for MT5
-            line_order_parameters = f'{ticker},Sell,{t_price},{stop_loss_price},{take_profit_price}'
-            print('line_order_parameters: ', line_order_parameters)
-            save_order_parameters_to_file(line_order_parameters)  # Save to file function
+            line_order_parameters_mt5 = f'{ticker},Sell,{stop_market_price},{stop_loss_price},{take_profit_price}'
+            print('line_order_parameters_mt5: ', line_order_parameters_mt5)
+            save_order_parameters_to_file(line_order_parameters_mt5)  # Save to file function
 
             # Reset sell_signal flag after processing order to allow the next unique signal
             sell_signal = False  # Prevent repeated order for the same signal

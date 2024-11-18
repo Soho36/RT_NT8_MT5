@@ -19,7 +19,7 @@ stop_loss_offset = 1                # Is added to SL for Shorts and subtracted f
 level_interactions_threshold = 3    # Times
 max_time_waiting_for_entry = 5      # Candles
 reverse_trades = False
-level_lifetime_minutes = 60         # Minutes
+level_lifetime_minutes = 240         # Minutes
 
 clear_csv_before_start = True
 # **************************************************************************************************************
@@ -93,7 +93,7 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         over_under_counter,
         s_signal,
         n_index,
-        t_price,
+        stop_market_price,
         levels_to_remove,
         candle_counter
     ) = level_rejection_signals(
@@ -126,7 +126,7 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         b_s_flag,
         s_s_flag,
     ) = send_buy_sell_orders(
-        t_price,
+        stop_market_price,
         l_signal,
         s_signal,
         n_index,

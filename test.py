@@ -1,0 +1,1 @@
+line_order_parameters = f'Buy, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
