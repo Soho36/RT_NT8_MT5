@@ -110,22 +110,36 @@ namespace NinjaTrader.NinjaScript.Strategies
 					Print("Cancelled previous Long3 order.");
 				}
 
-				// Place new orders
-				if (longOrder1 == null || longOrder1.OrderState != OrderState.Working)
+				// Place new LONG orders
+				try
 				{
-					longOrder1 = EnterLongStopMarket(0, true, 2, entryPrice, "Long1");
-					SetStopLoss("Long1", CalculationMode.Price, stopPrice, false);
-					SetProfitTarget("Long1", CalculationMode.Price, targetPrice1);
-					Print($"1-st LONG stop-market order placed at {entryPrice} with TP1: {targetPrice1}, SL: {stopPrice}");
+					if (longOrder1 == null || longOrder1.OrderState != OrderState.Working)
+					{
+						longOrder1 = EnterLongStopMarket(0, true, 2, entryPrice, "Long1");
+						SetStopLoss("Long1", CalculationMode.Price, stopPrice, false);
+						SetProfitTarget("Long1", CalculationMode.Price, targetPrice1);
+						Print($"1-st LONG stop-market order placed at {entryPrice} with TP1: {targetPrice1}, SL: {stopPrice}");
+					}
 				}
-
-				if (longOrder2 == null || longOrder2.OrderState != OrderState.Working)
+				catch (Exception ex)
 				{
-					longOrder2 = EnterLongStopMarket(0, true, 1, entryPrice, "Long3");
-					SetStopLoss("Long3", CalculationMode.Price, stopPrice, false);
-					SetProfitTarget("Long3", CalculationMode.Price, targetPrice2);
-					Print($"2-nd LONG stop-market order placed at {entryPrice} with TP2: {targetPrice2}, SL: {stopPrice}");
+					Print($"Error placing Long1 order: {ex.Message}");
 				}
+				
+				try
+				{
+					if (longOrder2 == null || longOrder2.OrderState != OrderState.Working)
+					{
+						longOrder2 = EnterLongStopMarket(0, true, 1, entryPrice, "Long3");
+						SetStopLoss("Long3", CalculationMode.Price, stopPrice, false);
+						SetProfitTarget("Long3", CalculationMode.Price, targetPrice2);
+						Print($"2-nd LONG stop-market order placed at {entryPrice} with TP2: {targetPrice2}, SL: {stopPrice}");
+					}
+				}
+				catch (Exception ex)
+				{
+					Print($"Error placing Long3 order: {ex.Message}");
+				}				
 
 				executeLongTrade = false; // Reset flag
 			}
@@ -146,21 +160,35 @@ namespace NinjaTrader.NinjaScript.Strategies
 					Print("Cancelled previous Short2 order.");
 				}
 
-				// Place new orders
-				if (shortOrder1 == null || shortOrder1.OrderState != OrderState.Working)
+				// Place new SHORT orders
+				try
 				{
-					shortOrder1 = EnterShortStopMarket(0, true, 2, entryPrice, "Short1");
-					SetStopLoss("Short1", CalculationMode.Price, stopPrice, false);
-					SetProfitTarget("Short1", CalculationMode.Price, targetPrice1);
-					Print($"1-st SHORT order placed at {entryPrice} with TP1: {targetPrice1}, SL: {stopPrice}");
+					if (shortOrder1 == null || shortOrder1.OrderState != OrderState.Working)
+					{
+						shortOrder1 = EnterShortStopMarket(0, true, 2, entryPrice, "Short1");
+						SetStopLoss("Short1", CalculationMode.Price, stopPrice, false);
+						SetProfitTarget("Short1", CalculationMode.Price, targetPrice1);
+						Print($"1-st SHORT order placed at {entryPrice} with TP1: {targetPrice1}, SL: {stopPrice}");
+					}
 				}
-
-				if (shortOrder2 == null || shortOrder2.OrderState != OrderState.Working)
+				catch (Exception ex)
 				{
-					shortOrder2 = EnterShortStopMarket(0, true, 1, entryPrice, "Short2");
-					SetStopLoss("Short2", CalculationMode.Price, stopPrice, false);
-					SetProfitTarget("Short2", CalculationMode.Price, targetPrice2);
-					Print($"2-nd SHORT order placed at {entryPrice} with TP2: {targetPrice2}, SL: {stopPrice}");
+					Print($"Error placing Short1 order: {ex.Message}");
+				}
+				
+				try
+				{
+					if (shortOrder2 == null || shortOrder2.OrderState != OrderState.Working)
+					{
+						shortOrder2 = EnterShortStopMarket(0, true, 1, entryPrice, "Short2");
+						SetStopLoss("Short2", CalculationMode.Price, stopPrice, false);
+						SetProfitTarget("Short2", CalculationMode.Price, targetPrice2);
+						Print($"2-nd SHORT order placed at {entryPrice} with TP2: {targetPrice2}, SL: {stopPrice}");
+					}
+				}
+				catch (Exception ex)
+				{
+					Print($"Error placing Short2 order: {ex.Message}");
 				}
 
 				executeShortTrade = false;  // Reset flag
@@ -168,7 +196,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
 			
 		    // Move stop to breakeven for long positions once TP1 is reached
-		    if (Position.MarketPosition == MarketPosition.Long)
+		    if (Position.MarketPosition == MarketPosition.Long && !stopLossMovedToBreakevenLong1)
 		    {
 		        if (Close[0] >= targetPrice1 - 1 * TickSize)
 		        {
@@ -181,7 +209,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 		    }
 
 		    // Move stop to breakeven for short positions once TP1 is reached
-		    if (Position.MarketPosition == MarketPosition.Short)
+		    if (Position.MarketPosition == MarketPosition.Short && !stopLossMovedToBreakevenShort1)
 		    {
 		        if (Close[0] <= targetPrice1 + 1 * TickSize)
 		        {
