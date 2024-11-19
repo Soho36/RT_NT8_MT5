@@ -40,7 +40,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 		
 		// Track whether stop losses have been moved to breakeven
 		bool stopLossMovedToBreakevenLong1 = false;
-		bool stopLossMovedToBreakevenLong2 = false;
+		bool stopLossMovedToBreakevenShort1 = false;
 
         protected override void OnStateChange()
         {
@@ -176,6 +176,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 		            SetStopLoss("Long1", CalculationMode.Price, Position.AveragePrice, false);
 		            SetStopLoss("Long3", CalculationMode.Price, Position.AveragePrice, false);
 		            Print($"Stop loss moved to breakeven for Long1 and Long3 at price: {Position.AveragePrice}");
+					stopLossMovedToBreakevenLong1 = true; // Set flag to prevent repeated execution
 		        }
 		    }
 
@@ -188,10 +189,9 @@ namespace NinjaTrader.NinjaScript.Strategies
 		            SetStopLoss("Short1", CalculationMode.Price, Position.AveragePrice, false);
 		            SetStopLoss("Short3", CalculationMode.Price, Position.AveragePrice, false);
 		            Print($"Stop loss moved to breakeven for Short1 and Short3 at price: {Position.AveragePrice}");
+					stopLossMovedToBreakevenShort1 = true; // Set flag to prevent repeated execution
 		        }
 		    }
 		}
-		
-	
     }
 }

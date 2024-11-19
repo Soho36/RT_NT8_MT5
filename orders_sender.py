@@ -27,7 +27,7 @@ def send_buy_sell_orders(
         ticker,
         stop_loss_offset,
         risk_reward,
-        reverse_trades
+        # reverse_trades
 ):
     # +------------------------------------------------------------------+
     # BUY ORDER
@@ -42,7 +42,7 @@ def send_buy_sell_orders(
 
             winsound.PlaySound('chord.wav', winsound.SND_FILENAME)
             print()
-            print('▲ ▲ ▲ Buy order has been sent to MT5! ▲ ▲ ▲'.upper())
+            print('▲ ▲ ▲ Buy order has been sent to NT8! ▲ ▲ ▲'.upper())
 
             # ORDER PARAMETERS
             stop_loss_price = round(last_candle_low - stop_loss_offset, 3)
@@ -51,9 +51,12 @@ def send_buy_sell_orders(
             take_profit_price_2 = round((((last_candle_high - stop_loss_price) * 2)  # R/R hardcoded
                                          + last_candle_high) + stop_loss_offset, 3)
 
-            # line_order_parameters_mt5 = f'{ticker},Buy,{stop_market_price},{stop_loss_price},{take_profit_price}'  # NO WHITESPACES
+            # line_order_parameters_mt5 =
+            # f'{ticker},Buy,{stop_market_price},{stop_loss_price},{take_profit_price}'  # NO WHITESPACES
             # print('line_order_parameters_mt5: ', line_order_parameters_mt5)
-            line_order_parameters_nt8 = f'Buy, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
+
+            line_order_parameters_nt8 = \
+                f'Buy, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
             print('line_order_parameters_mt8: ', line_order_parameters_nt8)
 
             save_order_parameters_to_file(line_order_parameters_nt8)  # Located in data_handling_realtime.py
@@ -73,18 +76,20 @@ def send_buy_sell_orders(
             # Play sound to indicate order sent
             winsound.PlaySound('chord.wav', winsound.SND_FILENAME)
             print()
-            print('▼ ▼ ▼ Sell order has been sent to MT5! ▼ ▼ ▼'.upper())
+            print('▼ ▼ ▼ Sell order has been sent to NT8! ▼ ▼ ▼'.upper())
 
             # Order parameters
             stop_loss_price = round(last_candle_high + stop_loss_offset, 3)
-            take_profit_price = round((last_candle_low - ((stop_loss_price - last_candle_low) * risk_reward))
+            take_profit_price = round((last_candle_low - ((stop_loss_price - last_candle_low) * 1))     # R/R hardcoded
                                       + stop_loss_offset, 3)
-            take_profit_price_2 = round((last_candle_low - ((stop_loss_price - last_candle_low) * risk_reward))
+            take_profit_price_2 = round((last_candle_low - ((stop_loss_price - last_candle_low) * 2))   # R/R hardcoded
                                         + stop_loss_offset, 3)
 
             # line_order_parameters_mt5 = f'{ticker},Sell,{stop_market_price},{stop_loss_price},{take_profit_price}'
             # print('line_order_parameters_mt5: ', line_order_parameters_mt5)
-            line_order_parameters_nt8 = f'Buy, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
+            line_order_parameters_nt8 = \
+                f'Sell, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
+            print('line_order_parameters_mt8: ', line_order_parameters_nt8)
 
             save_order_parameters_to_file(line_order_parameters_nt8)  # Save to file function
 

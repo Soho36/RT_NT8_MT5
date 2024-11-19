@@ -1,4 +1,5 @@
-from data_handling_realtime import get_dataframe_from_file, get_levels_from_file, leave_only_last_line, remove_expired_levels
+from data_handling_realtime import (get_dataframe_from_file, get_levels_from_file, leave_only_last_line,
+                                    remove_expired_levels, mt5_logging_file_path)
 from price_levels_manual_realtime import process_levels
 from signals_with_ob_short_long_realtime import level_rejection_signals
 from orders_sender import last_candle_ohlc, send_buy_sell_orders
@@ -16,21 +17,22 @@ stop_loss_offset = 1                # Is added to SL for Shorts and subtracted f
 
 # hardcoded_sr_levels = [('2024-11-02 16:19:00', 69245.00), ('2024-11-02 16:19:00', 69167.00)]  # Example support levels
 
-level_interactions_threshold = 3    # Times
-max_time_waiting_for_entry = 5      # Candles
-reverse_trades = False
+level_interactions_threshold = 5    # Times
+max_time_waiting_for_entry = 30      # Minutes
+# reverse_trades = False
 level_lifetime_minutes = 240         # Minutes
 
 clear_csv_before_start = True
 # **************************************************************************************************************
 
 # LIIKURI PATHS
-path_ohlc = \
-    'C:\\Users\\Liikurserv\\AppData\\Roaming\\MetaQuotes\\Terminal\\1D0E83E0BCAA42603583233CF21A762C\\MQL5\\Files'
-file = 'OHLCVData_475.csv'
+path_ohlc_check_for_change = \
+    'C:\\Users\\Liikurserv\\AppData\\Roaming\\MetaQuotes\\Terminal\\09FF355D73768D9CE6BDD4EE575EAB09\\MQL5\\Files\\'
+file = 'OHLCVData_828.csv'
 
 # SILLAMAE PATHS
-# path = 'C:\\Users\\Vova deduskin lap\\AppData\\Roaming\\MetaQuotes\\Terminal\\D0E8209F77C8CF37AD8BF550E51FF075\\MQL5\\Files'
+# path =
+# 'C:\\Users\\Vova deduskin lap\\AppData\\Roaming\\MetaQuotes\\Terminal\\D0E8209F77C8CF37AD8BF550E51FF075\\MQL5\\Files'
 # file = 'OHLCVData_475.csv'
 # SILLAMAE PATHS
 
@@ -55,7 +57,7 @@ class CsvChangeHandler(FileSystemEventHandler):
     def on_modified(self, event):
         global buy_signal_flag, sell_signal_flag, last_signal
         # print(f"File modified: {event.src_path}")  # This should print on any modification
-        if not event.src_path == os.path.join(path_ohlc, file):  # CSV file path
+        if not event.src_path == os.path.join(path_ohlc_check_for_change, file):  # CSV file path
             return
         print("CSV file updated; triggering function calls...")
         # Call a function that contains all main calls
@@ -138,7 +140,7 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         ticker,
         stop_loss_offset,
         risk_reward,
-        reverse_trades
+        # reverse_trades
     )
 
     l_signal = s_signal
@@ -149,10 +151,10 @@ if __name__ == "__main__":
     try:
         event_handler = CsvChangeHandler()
         observer = Observer()
-        observer.schedule(event_handler, path_ohlc, recursive=False)  # CSV folder path
+        observer.schedule(event_handler, path_ohlc_check_for_change, recursive=False)  # CSV folder path
         observer.start()
     except FileNotFoundError as e:
-        print(f'Error: {e}. \nPlease check that the path: {path_ohlc} exists and is accessible.')
+        print(f'Error: {e}. \nPlease check that the path: {path_ohlc_check_for_change} exists and is accessible.')
 
     else:
         # Run the observer only if no exceptions were raised
