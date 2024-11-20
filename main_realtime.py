@@ -20,7 +20,7 @@ stop_loss_offset = 1                # Is added to SL for Shorts and subtracted f
 level_interactions_threshold = 5    # Times
 max_time_waiting_for_entry = 30      # Minutes
 # reverse_trades = False
-level_lifetime_minutes = 240         # Minutes
+level_lifetime_minutes = 420         # Minutes
 
 clear_csv_before_start = True
 # **************************************************************************************************************
