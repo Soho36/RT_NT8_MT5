@@ -66,7 +66,14 @@ namespace NinjaTrader.NinjaScript.Strategies
 				{
 					string signal = File.ReadAllText(signalFilePath).Trim();
 					string[] parts = signal.Split(',');
-
+					// Handle Cancel signal
+					if (signal.Equals("Cancel", StringComparison.OrdinalIgnoreCase))
+					{
+						CancelAllOrders();
+						Print("Received Cancel signal. All active orders have been cancelled.");
+						File.WriteAllText(signalFilePath, string.Empty); // Clear the signal file
+						return; // Exit early as no further action is needed
+					}
 					if (parts.Length == 5)
 					{
 						string tradeDirection = parts[0].Trim();                    // Direction
@@ -175,7 +182,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 				foreach (Order order in Account.Orders)
 				{
 					// Cancel only orders associated with this strategy and in working/accepted state
-					if ((order.OrderState == OrderState.Working || order.OrderState == OrderState.Accepted) && order.Name.StartsWith(Name))
+					if ((order.OrderState == OrderState.Working || order.OrderState == OrderState.Accepted))
 					{
 						CancelOrder(order);
 						Print($"Cancelled order: {order.Name}");
