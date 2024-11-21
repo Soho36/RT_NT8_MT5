@@ -97,32 +97,12 @@ namespace NinjaTrader.NinjaScript.Strategies
 		    // Handle long positions
 		    if (executeLongTrade)
 			{
-				// Cancel old long orders if they exist
-				if (longOrder1 != null && longOrder1.OrderState == OrderState.Working)
-				{
-					CancelOrder(longOrder1);
-					Print("Cancelled previous Long1 order.");
-				}
-
-				if (longOrder2 != null && longOrder2.OrderState == OrderState.Working)
-				{
-					CancelOrder(longOrder2);
-					Print("Cancelled previous Long3 order.");
-				}
-				
-				// Cancel old short orders if they exist
-				if (shortOrder1 != null && shortOrder1.OrderState == OrderState.Working)
-				{
-					CancelOrder(shortOrder1);
-					Print("Cancelled previous Short1 order.");
-				}
-
-				if (shortOrder2 != null && shortOrder2.OrderState == OrderState.Working)
-				{
-					CancelOrder(shortOrder2);
-					Print("Cancelled previous Short2 order.");
-				}
-
+				// Cancel all conflicting orders
+				//foreach (var order in Orders)
+				//{
+				//	CancelOrder(order);
+				//}
+				//Print("Cancel all active orders");
 				// Place new LONG orders
 				try
 				{
@@ -160,32 +140,6 @@ namespace NinjaTrader.NinjaScript.Strategies
 		    // Handle short positions
 			if (executeShortTrade)
 			{
-				// Cancel old short orders if they exist
-				if (shortOrder1 != null && shortOrder1.OrderState == OrderState.Working)
-				{
-					CancelOrder(shortOrder1);
-					Print("Cancelled previous Short1 order.");
-				}
-
-				if (shortOrder2 != null && shortOrder2.OrderState == OrderState.Working)
-				{
-					CancelOrder(shortOrder2);
-					Print("Cancelled previous Short2 order.");
-				}
-				
-				// Cancel old long orders if they exist
-				if (longOrder1 != null && longOrder1.OrderState == OrderState.Working)
-				{
-					CancelOrder(longOrder1);
-					Print("Cancelled previous Long1 order.");
-				}
-
-				if (longOrder2 != null && longOrder2.OrderState == OrderState.Working)
-				{
-					CancelOrder(longOrder2);
-					Print("Cancelled previous Long3 order.");
-				}
-
 				// Place new SHORT orders
 				try
 				{
