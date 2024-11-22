@@ -89,26 +89,12 @@ namespace NinjaTrader.NinjaScript.Strategies
 									executeLongTrade = true;
 									File.WriteAllText(signalFilePath, string.Empty);
 								}
-								else if (Position.MarketPosition == MarketPosition.Short)
-								{
-									CancelAllOrders();
-									executeLongTrade = true;
-									Print("Cancelled short orders to place long orders.");
-									File.WriteAllText(signalFilePath, string.Empty);
-								}
 							}
 							else if (tradeDirection.Equals("Sell", StringComparison.OrdinalIgnoreCase))
 							{
 								if (Position.MarketPosition == MarketPosition.Flat)
 								{
 									executeShortTrade = true;
-									File.WriteAllText(signalFilePath, string.Empty);
-								}
-								else if (Position.MarketPosition == MarketPosition.Long)
-								{
-									CancelAllOrders();
-									executeShortTrade = true;
-									Print("Cancelled long orders to place short orders.");
 									File.WriteAllText(signalFilePath, string.Empty);
 								}
 							}
@@ -174,7 +160,35 @@ namespace NinjaTrader.NinjaScript.Strategies
 				}
 				executeShortTrade = false;  // Reset flag
 			}
+			// Move stop to breakeven for long positions once TP1 is reached
+		    if (Position.MarketPosition == MarketPosition.Long && !stopLossMovedToBreakevenLong1)
+		    {
+		        if (Close[0] >= targetPrice1 - 1 * TickSize)
+		        {
+		            // Move stop loss to breakeven (entry price)
+		            SetStopLoss("Long1", CalculationMode.Price, Position.AveragePrice, false);
+		            SetStopLoss("Long3", CalculationMode.Price, Position.AveragePrice, false);
+		            Print($"Stop loss moved to breakeven for Long1 and Long3 at price: {Position.AveragePrice}");
+					stopLossMovedToBreakevenLong1 = true; // Set flag to prevent repeated execution
+		        }
+		    }
+
+		    // Move stop to breakeven for short positions once TP1 is reached
+		    if (Position.MarketPosition == MarketPosition.Short && !stopLossMovedToBreakevenShort1)
+		    {
+		        if (Close[0] <= targetPrice1 + 1 * TickSize)
+		        {
+		            // Move stop loss to breakeven (entry price)
+		            SetStopLoss("Short1", CalculationMode.Price, Position.AveragePrice, false);
+		            SetStopLoss("Short3", CalculationMode.Price, Position.AveragePrice, false);
+		            Print($"Stop loss moved to breakeven for Short1 and Short3 at price: {Position.AveragePrice}");
+					stopLossMovedToBreakevenShort1 = true; // Set flag to prevent repeated execution
+		        }
+		    }
 		}
+    
+
+		
 		private void CancelAllOrders()
 		{
 			try
