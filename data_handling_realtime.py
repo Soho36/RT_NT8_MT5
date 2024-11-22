@@ -26,6 +26,7 @@ nt8_buy_sell_signals_for_path = (
 levels_path = (
     f'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\hardcoded_sr_levels.csv'
 )
+position_state_path = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\position_state.txt'
 
 # SILLAMAE PATHS
 # mt5_logging_file_path = (
@@ -102,6 +103,14 @@ def remove_expired_levels(level_lifetime_minutes, dataframe_from_log):
     # Write the remaining levels back to the file
     with open(levels_path, 'w', encoding='utf-8') as file:
         file.writelines(updated_levels)
+
+
+# Checks if there is an open position
+def get_position_state():
+    with open(position_state_path, 'r', encoding='utf-8') as file:
+        state = file.read()
+    if state == 'closed':
+        return True
 
 
 def save_order_parameters_to_file(line_order_parameters):   # Called from orders_sender.py

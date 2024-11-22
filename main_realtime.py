@@ -1,5 +1,5 @@
 from data_handling_realtime import (get_dataframe_from_file, get_levels_from_file, leave_only_last_line,
-                                    remove_expired_levels, mt5_logging_file_path)
+                                    remove_expired_levels)
 from price_levels_manual_realtime import process_levels
 from signals_with_ob_short_long_realtime import level_rejection_signals
 from orders_sender import last_candle_ohlc, send_buy_sell_orders

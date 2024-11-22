@@ -1,5 +1,3 @@
 venv/
 __pycache__/
 .idea/
-hardcoded_sr_levels.csv
-trade_signal.txt

@@ -1,5 +1,5 @@
 import pandas as pd
-
+from data_handling_realtime import get_position_state
 
 """
 Main function analyzing price interaction with levels and long/short signals generation logics
@@ -88,7 +88,7 @@ def level_rejection_signals(
         # Loop through each level column
         for level_column in sr_level_columns:
             current_sr_level = row[level_column]
-            if current_sr_level is not None:
+            if current_sr_level is not None and get_position_state():
                 # Check if signal count for this level has reached the threshold
                 if level_signal_count[level_column] < level_interactions_threshold:
 
@@ -838,7 +838,8 @@ def level_rejection_signals(
                     print('-------------------------------------------------------------------------------')
                     print(f'Level interactions number ({level_interactions_threshold}) reached '
                           f'for level {current_sr_level}')
-
+            else:
+                print('There is an open position. No signals...')
     return (
             level_signal_count,
             s_signal,

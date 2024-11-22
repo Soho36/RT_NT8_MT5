@@ -39,9 +39,6 @@ namespace NinjaTrader.NinjaScript.Strategies
 		private Order shortOrder2;
 		private string lastPositionState = "closed"; // Tracks the last written position state
 		private string positionStateFilePath = "C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\position_state.txt";
-		
-		private string activeOrdersFilePath = "C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\current_order_direction.txt";
-		
 		// Track whether stop losses have been moved to breakeven
 		bool stopLossMovedToBreakevenLong1 = false;
 		bool stopLossMovedToBreakevenShort1 = false;
@@ -214,35 +211,6 @@ namespace NinjaTrader.NinjaScript.Strategies
 				}
 			}
 		}
-		protected override void OnOrderUpdate(Order order, double limitPrice, double stopPrice, int quantity, int filled, double averageFillPrice, OrderState orderState, DateTime time, ErrorCode error, string comment)
-		{
-			try
-			{
-				// Get all active orders (working or accepted)
-				var activeOrders = Account.Orders.Where(o => o.OrderState == OrderState.Working || o.OrderState == OrderState.Accepted).ToList();
-
-				// Check if there are active buy or sell orders
-				if (activeOrders.Any(o => o.OrderAction == OrderAction.Buy))
-				{
-					File.WriteAllText(activeOrdersFilePath, "buy");
-				}
-				else if (activeOrders.Any(o => o.OrderAction == OrderAction.SellShort))
-				{
-					File.WriteAllText(activeOrdersFilePath, "sell");
-				}
-				else
-				{
-					// No active orders
-					File.WriteAllText(activeOrdersFilePath, "");
-				}
-			}
-			catch (Exception ex)
-			{
-				Print($"Error updating order direction file: {ex.Message}");
-			}
-		}
-
-
 		private void CancelAllOrders()
 		{
 			try
