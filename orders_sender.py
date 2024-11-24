@@ -1,5 +1,6 @@
 import winsound
-from data_handling_realtime import save_order_parameters_to_file
+from data_handling_realtime import save_order_parameters_to_file, get_current_pending_order_direction
+import time
 
 
 def last_candle_ohlc(output_df_with_levels):
@@ -51,15 +52,20 @@ def send_buy_sell_orders(
             take_profit_price_2 = round((((last_candle_high - stop_loss_price) * 2)  # R/R hardcoded
                                          + last_candle_high) + stop_loss_offset, 3)
 
-            # line_order_parameters_mt5 =
-            # f'{ticker},Buy,{stop_market_price},{stop_loss_price},{take_profit_price}'  # NO WHITESPACES
-            # print('line_order_parameters_mt5: ', line_order_parameters_mt5)
-
             line_order_parameters_nt8 = \
                 f'Buy, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
-            print('line_order_parameters_mt8: ', line_order_parameters_nt8)
+            line_order_cancel = 'cancel'
 
-            save_order_parameters_to_file(line_order_parameters_nt8)  # Located in data_handling_realtime.py
+            if get_current_pending_order_direction():   # If there is an active order:
+                print('Cancelling previous order...')
+                save_order_parameters_to_file(line_order_cancel)    # cancel it and...
+                time.sleep(1)
+                print('Submitting new order: ', line_order_parameters_nt8)
+                save_order_parameters_to_file(line_order_parameters_nt8)    # save new order to file
+            else:
+                print('Submitting new order: ', line_order_parameters_nt8)
+                save_order_parameters_to_file(line_order_parameters_nt8)
+
             # Reset buy_signal flag after processing order to allow the next unique signal
             buy_signal = False  # Prevent repeated order for the same signal
         # Reset flags here if a new unique signal occurs in consecutive candles
@@ -85,13 +91,19 @@ def send_buy_sell_orders(
             take_profit_price_2 = round((last_candle_low - ((stop_loss_price - last_candle_low) * 2))   # R/R hardcoded
                                         + stop_loss_offset, 3)
 
-            # line_order_parameters_mt5 = f'{ticker},Sell,{stop_market_price},{stop_loss_price},{take_profit_price}'
-            # print('line_order_parameters_mt5: ', line_order_parameters_mt5)
             line_order_parameters_nt8 = \
                 f'Sell, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
-            print('line_order_parameters_mt8: ', line_order_parameters_nt8)
+            line_order_cancel = 'cancel'
 
-            save_order_parameters_to_file(line_order_parameters_nt8)  # Save to file function
+            if get_current_pending_order_direction():   # If there is an active order:
+                print('Cancelling previous order...')
+                save_order_parameters_to_file(line_order_cancel)    # cancel it and...
+                time.sleep(1)
+                print('Submitting new order: ', line_order_parameters_nt8)
+                save_order_parameters_to_file(line_order_parameters_nt8)  # save new order to file
+            else:
+                print('Submitting new order: ', line_order_parameters_nt8)
+                save_order_parameters_to_file(line_order_parameters_nt8)
 
             # Reset sell_signal flag after processing order to allow the next unique signal
             sell_signal = False  # Prevent repeated order for the same signal
