@@ -56,7 +56,7 @@ def send_buy_sell_orders(
                 f'Buy, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
             line_order_cancel = 'cancel'
 
-            if get_current_pending_order_direction():   # If there is an active order:
+            if get_current_pending_order_direction() == 'sell':   # If there is an active sell order:
                 print('Cancelling previous order...')
                 save_order_parameters_to_file(line_order_cancel)    # cancel it and...
                 time.sleep(1)
@@ -95,7 +95,7 @@ def send_buy_sell_orders(
                 f'Sell, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
             line_order_cancel = 'cancel'
 
-            if get_current_pending_order_direction():   # If there is an active order:
+            if get_current_pending_order_direction() == 'buy':   # If there is an active order:
                 print('Cancelling previous order...')
                 save_order_parameters_to_file(line_order_cancel)    # cancel it and...
                 time.sleep(1)

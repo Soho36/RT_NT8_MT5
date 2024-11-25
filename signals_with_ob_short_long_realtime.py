@@ -87,75 +87,76 @@ def level_rejection_signals(
 
         # Loop through each level column
         for level_column in sr_level_columns:
-            if get_position_state():
-                current_sr_level = row[level_column]
-                if current_sr_level is not None:
-                    # Check if signal count for this level has reached the threshold
-                    if level_signal_count[level_column] < level_interactions_threshold:
+            # if get_position_state():
+            current_sr_level = row[level_column]
+            if current_sr_level is not None:
+                # Check if signal count for this level has reached the threshold
+                if level_signal_count[level_column] < level_interactions_threshold:
 
-                        # **************************************************************************************************
-                        # SHORTS LOGICS BEGIN HERE
-                        # **************************************************************************************************
-                        # REJECTION SHORTS LOGIC:
-                        # Level interaction logic
-                        # print(f'{index} Analyzing candle at {current_candle_time}')
-                        if previous_close is not None and previous_close < current_sr_level:
-                            if current_candle_high > current_sr_level:
-                                if current_candle_close < current_sr_level:
-                                    # Over-Under condition met for short
-                                    level_signal_count[level_column] += 1
-                                    level_interaction_signal_time = current_candle_time
-                                    print('-------------------------------------------------------------------------------')
-                                    print(f"{index} ▲▼ Short: 'Over-under' condition met, "
-                                          f"Time: {current_candle_time}, "
-                                          f"SR level: {current_sr_level}")
+                    # **************************************************************************************************
+                    # SHORTS LOGICS BEGIN HERE
+                    # **************************************************************************************************
+                    # REJECTION SHORTS LOGIC:
+                    # Level interaction logic
+                    # print(f'{index} Analyzing candle at {current_candle_time}')
+                    if previous_close is not None and previous_close < current_sr_level:
+                        if current_candle_high > current_sr_level:
+                            if current_candle_close < current_sr_level:
+                                # Over-Under condition met for short
+                                level_signal_count[level_column] += 1
+                                level_interaction_signal_time = current_candle_time
+                                print('-------------------------------------------------------------------------------')
+                                print(f"{index} ▲▼ Short: 'Over-under' condition met, "
+                                      f"Time: {current_candle_time}, "
+                                      f"SR level: {current_sr_level}")
 
-                                    # Step 1: Find the first green candle (where close > open)
-                                    green_candle_found = False
-                                    green_candle_low = None
-                                    potential_ob_time = None
-                                    trade_type = 'rejection'
-                                    side = 'short'
+                                # Step 1: Find the first green candle (where close > open)
+                                green_candle_found = False
+                                green_candle_low = None
+                                potential_ob_time = None
+                                trade_type = 'rejection'
+                                side = 'short'
 
-                                    # OB candle
-                                    for subsequent_index in range(index + 1, len(output_df_with_levels)):
+                                # OB candle
+                                for subsequent_index in range(index + 1, len(output_df_with_levels)):
 
-                                        potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
-                                        # Convert to datetime for time calculations
-                                        potential_ob_time = pd.to_datetime(
-                                            str(potential_ob_candle['Date']) + ' ' + str(potential_ob_candle['Time'])
-                                        )
-                                        # Calculate time difference between the current potential candle
-                                        # and the initial SR level interaction
-                                        time_diff = (potential_ob_time - pd.to_datetime(
-                                            level_interaction_signal_time)).total_seconds() / 60
+                                    potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
+                                    # Convert to datetime for time calculations
+                                    potential_ob_time = pd.to_datetime(
+                                        str(potential_ob_candle['Date']) + ' ' + str(potential_ob_candle['Time'])
+                                    )
+                                    # Calculate time difference between the current potential candle
+                                    # and the initial SR level interaction
+                                    time_diff = (potential_ob_time - pd.to_datetime(
+                                        level_interaction_signal_time)).total_seconds() / 60
 
-                                        # Check if we've exceeded the maximum waiting time
-                                        trace = 'Rejection_shorts_1'
-                                        if check_time_limit(
-                                                max_time_waiting_for_entry,
-                                                subsequent_index,
-                                                potential_ob_time,
-                                                level_interaction_signal_time,
-                                                time_diff,
-                                                trace
-                                        ):
-                                            break   # Exit the loop if time limit is exceeded
+                                    # Check if we've exceeded the maximum waiting time
+                                    trace = 'Rejection_shorts_1'
+                                    if check_time_limit(
+                                            max_time_waiting_for_entry,
+                                            subsequent_index,
+                                            potential_ob_time,
+                                            level_interaction_signal_time,
+                                            time_diff,
+                                            trace
+                                    ):
+                                        break   # Exit the loop if time limit is exceeded
 
+                                    print(
+                                        f"Looking for GREEN candle at index {subsequent_index}, "
+                                        f"Time: {potential_ob_time}"
+                                    )
+                                    # Check if it's a green candle (close > open)
+                                    if potential_ob_candle['Close'] > potential_ob_candle['Open']:
                                         print(
-                                            f"Looking for GREEN candle at index {subsequent_index}, "
+                                            f"○ Last GREEN candle found at index {subsequent_index}, "
                                             f"Time: {potential_ob_time}"
                                         )
-                                        # Check if it's a green candle (close > open)
-                                        if potential_ob_candle['Close'] > potential_ob_candle['Open']:
-                                            print(
-                                                f"○ Last GREEN candle found at index {subsequent_index}, "
-                                                f"Time: {potential_ob_time}"
-                                            )
-                                            # Check if the green candle is below the SR level
-                                            if potential_ob_candle['Close'] < current_sr_level:
-                                                green_candle_low = potential_ob_candle['Low']
-                                                green_candle_found = True
+                                        # Check if the green candle is below the SR level
+                                        if potential_ob_candle['Close'] < current_sr_level:
+                                            green_candle_low = potential_ob_candle['Low']
+                                            green_candle_found = True
+                                            if get_position_state():
                                                 print(
                                                     f"Green candle is below the SR level at index {subsequent_index}, "
                                                     f"Time: {potential_ob_time}"
@@ -174,146 +175,76 @@ def level_rejection_signals(
                                                 )
                                                 # break
                                             else:
-                                                print(
-                                                    f"Green candle found, but it's not below the level. "
-                                                    f"Checking next candle..."
-                                                )
-
-                                    # Step 2: After finding the green candle, wait for the price to hit its low
-                                    # if green_candle_found:
-                                    #     # Store the time of the green candle
-                                    #     potential_ob_time = pd.to_datetime(potential_ob_time)
-                                    #     for next_index in range(subsequent_index + 1, len(output_df_with_levels)):
-                                    #         next_candle_after_ob = output_df_with_levels.iloc[next_index]
-                                    #         signal_time = next_candle_after_ob['Time']
-                                    #         # Calculate the time difference in minutes
-                                    #         # between the green candle and the current candle
-                                    #         time_diff = (potential_ob_time -
-                                    #                      pd.to_datetime(level_interaction_signal_time)).total_seconds() / 60
-                                    #
-                                    #         print(
-                                    #             f"Waiting for next candle to close below GREEN candle low at {next_index},"
-                                    #             f"Time: {signal_time}"
-                                    #         )
-                                    #
-                                    #         # Check if we've exceeded the maximum waiting time
-                                    #         trace = 'Rejection_shorts_2'
-                                    #         if check_time_limit(
-                                    #                 max_time_waiting_for_entry,
-                                    #                 next_index,
-                                    #                 potential_ob_time,
-                                    #                 level_interaction_signal_time,
-                                    #                 time_diff,
-                                    #                 trace
-                                    #         ):
-                                    #             break  # Exit the loop if time limit is exceeded
-                                    #
-                                    #         if next_candle_after_ob['Close'] > next_candle_after_ob['Open']:
-                                    #             next_candle_after_ob_time = pd.to_datetime(
-                                    #                 str(next_candle_after_ob['Date']) + ' '
-                                    #                 + str(next_candle_after_ob['Time'])
-                                    #             )
-                                    #             signal_time = next_candle_after_ob['Time']
-                                    #             print(
-                                    #                 f"NEW GREEN candle formed at index {next_index}, "
-                                    #                 f"Time: {signal_time}, "
-                                    #             )
-                                    #             print('CANCEL STOPMARKET.1A')
-                                    #             print('PLACE NEW STOPMARKET.1A')
-                                    #             signal = f'-100+{subsequent_index}'
-                                    #             trigger_price = next_candle_after_ob['Low']
-                                    #
-                                    #             s_signal, n_index, t_price = signal_triggered_output(
-                                    #                 subsequent_index,
-                                    #                 signal_time,
-                                    #                 trigger_price,
-                                    #                 trade_type,
-                                    #                 side,
-                                    #                 signal
-                                    #             )
-                                    #             break
-                                    #             # subsequent_index = next_index
-                                    #             # time_diff = (next_candle_after_ob_time -
-                                    #             #              pd.to_datetime(
-                                    #             #                  level_interaction_signal_time)).total_seconds() / 60
-                                    #             #
-                                    #             # # Check if we've exceeded the maximum waiting time
-                                    #             # trace = 'Rejection_shorts_4'
-                                    #             # if check_time_limit(
-                                    #             #         max_time_waiting_for_entry,
-                                    #             #         next_index,
-                                    #             #         next_candle_after_ob_time,
-                                    #             #         level_interaction_signal_time,
-                                    #             #         time_diff,
-                                    #             #         trace
-                                    #             # ):
-                                    #             #     break  # Exit the loop if time limit is exceeded
-                                    #     # else:
-                                    #     #     break
-                                    # break  # Exit the level loop once a signal is generated
+                                                print('There is an open position. No signals...'.upper())
+                                        else:
+                                            print(
+                                                f"Green candle found, but it's not below the level. "
+                                                f"Checking next candle..."
+                                            )
 
 
-    #                   BR-D LOGIC BEGIN HERE ******************************************************************************
-                        # Previous close was above level
-                        if previous_close is not None and previous_close > current_sr_level:
-                            if current_candle_close < current_sr_level:
-                                # Over condition met for short
-                                level_signal_count[level_column] += 1
-                                level_interaction_signal_time = current_candle_time
-                                print('-------------------------------------------------------------------------------')
-                                print(f"{index} ▼ Short: 'Under' condition met, "
-                                      f"Time: {current_candle_time}, "
-                                      f"SR level: {current_sr_level}")
+#                   BR-D LOGIC BEGIN HERE ******************************************************************************
+                    # Previous close was above level
+                    if previous_close is not None and previous_close > current_sr_level:
+                        if current_candle_close < current_sr_level:
+                            # Over condition met for short
+                            level_signal_count[level_column] += 1
+                            level_interaction_signal_time = current_candle_time
+                            print('-------------------------------------------------------------------------------')
+                            print(f"{index} ▼ Short: 'Under' condition met, "
+                                  f"Time: {current_candle_time}, "
+                                  f"SR level: {current_sr_level}")
 
-                                # Step 1: Find the first green candle (where close > open)
-                                green_candle_found = False
-                                green_candle_low = None
-                                potential_ob_time = None
-                                trade_type = 'BR-D'
-                                side = 'short'
+                            # Step 1: Find the first green candle (where close > open)
+                            green_candle_found = False
+                            green_candle_low = None
+                            potential_ob_time = None
+                            trade_type = 'BR-D'
+                            side = 'short'
 
-                                for subsequent_index in range(index + 1, len(output_df_with_levels)):
+                            for subsequent_index in range(index + 1, len(output_df_with_levels)):
 
-                                    potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
-                                    # Convert to datetime for time calculations
+                                potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
+                                # Convert to datetime for time calculations
 
-                                    potential_ob_time = pd.to_datetime(
-                                        str(potential_ob_candle['Date']) + ' ' + str(potential_ob_candle['Time'])
-                                    )
+                                potential_ob_time = pd.to_datetime(
+                                    str(potential_ob_candle['Date']) + ' ' + str(potential_ob_candle['Time'])
+                                )
 
-                                    # Calculate time difference between the current potential candle
-                                    # and the initial SR level interaction
-                                    time_diff = (potential_ob_time - pd.to_datetime(
-                                        level_interaction_signal_time)).total_seconds() / 60
+                                # Calculate time difference between the current potential candle
+                                # and the initial SR level interaction
+                                time_diff = (potential_ob_time - pd.to_datetime(
+                                    level_interaction_signal_time)).total_seconds() / 60
 
-                                    # Check if we've exceeded the maximum waiting time
-                                    trace = 'BR-D_shorts_1'
-                                    if check_time_limit(
-                                            max_time_waiting_for_entry,
-                                            subsequent_index,
-                                            potential_ob_time,
-                                            level_interaction_signal_time,
-                                            time_diff,
-                                            trace
-                                    ):
-                                        break  # Exit the loop if time limit is exceeded
+                                # Check if we've exceeded the maximum waiting time
+                                trace = 'BR-D_shorts_1'
+                                if check_time_limit(
+                                        max_time_waiting_for_entry,
+                                        subsequent_index,
+                                        potential_ob_time,
+                                        level_interaction_signal_time,
+                                        time_diff,
+                                        trace
+                                ):
+                                    break  # Exit the loop if time limit is exceeded
 
+                                print(
+                                    f"Looking for GREEN candle at index {subsequent_index}, "
+                                    f"Time: {potential_ob_time}"
+                                )
+
+                                # Check if it's a green candle (close > open)
+                                if potential_ob_candle['Close'] > potential_ob_candle['Open']:
                                     print(
-                                        f"Looking for GREEN candle at index {subsequent_index}, "
+                                        f"○ Last GREEN candle found at index {subsequent_index}, "
                                         f"Time: {potential_ob_time}"
                                     )
 
-                                    # Check if it's a green candle (close > open)
-                                    if potential_ob_candle['Close'] > potential_ob_candle['Open']:
-                                        print(
-                                            f"○ Last GREEN candle found at index {subsequent_index}, "
-                                            f"Time: {potential_ob_time}"
-                                        )
-
-                                        # Check if the green candle is below the SR level
-                                        if potential_ob_candle['Close'] < current_sr_level:
-                                            green_candle_low = potential_ob_candle['Low']
-                                            green_candle_found = True
+                                    # Check if the green candle is below the SR level
+                                    if potential_ob_candle['Close'] < current_sr_level:
+                                        green_candle_low = potential_ob_candle['Low']
+                                        green_candle_found = True
+                                        if get_position_state():
                                             print(
                                                 f"⦿ It's below the level at index {subsequent_index}, "
                                                 f"Time: {potential_ob_time}"
@@ -331,184 +262,75 @@ def level_rejection_signals(
                                                 signal
                                             )
                                             # break # Exit the loop, as we have found the valid green candle below the level
-
                                         else:
-                                            print(
-                                                f"Green candle found, but it's not below the level. "
-                                                f"Checking next candle...")
+                                            print('There is an open position. No signals...'.upper())
 
-                                # Step 2: After finding the green candle, wait for the price to hit its low
-                                # if green_candle_found:
-                                #     # Store the time of the green candle
-                                #     potential_ob_time = pd.to_datetime(potential_ob_time)
-                                #     for next_index in range(subsequent_index + 1, len(output_df_with_levels)):
-                                #         next_candle_after_ob = output_df_with_levels.iloc[next_index]
-                                #         signal_time = next_candle_after_ob['Time']
-                                #         # Calculate the time difference in minutes
-                                #         # between the green candle and the current candle
-                                #         time_diff = (potential_ob_time -
-                                #                      pd.to_datetime(level_interaction_signal_time)).total_seconds() / 60
-                                #
-                                #         print(
-                                #             f"Waiting for next candle to close below GREEN candle low at {next_index}, "
-                                #             f"Time: {signal_time}"
-                                #         )
-                                #
-                                #         # Check if we've exceeded the maximum waiting time
-                                #         trace = 'BR-D_shorts_2'
-                                #         if check_time_limit(
-                                #                 max_time_waiting_for_entry,
-                                #                 next_index,
-                                #                 signal_time,
-                                #                 level_interaction_signal_time,
-                                #                 time_diff,
-                                #                 trace
-                                #         ):
-                                #             break  # Exit the loop if time limit is exceeded
-                                #
-                                #         # THIS IS THE ACTUAL SIGNAL FOR LONG TRADE OPEN
-                                #         # Price hits the low of the green candle
-                                #         # if next_candle_after_ob['Low'] < green_candle_low:
-                                #         #     print('!!! Stopmarket order triggered !!!')
-                                #
-                                #             # Store the time of the next candle after OB
-                                #             # next_candle_after_ob_time = pd.to_datetime(next_candle_after_ob['Time'])
-                                #             # if next_candle_after_ob['Close'] < current_sr_level:
-                                #             #     # signal = -100  # Short signal
-                                #             #     signal = f'-100+{next_index}'
-                                #             #     trigger_price = next_candle_after_ob['Close']
-                                #             #
-                                #             #     s_signal, n_index = signal_triggered_output(
-                                #             #         next_index,
-                                #             #         signal_time,
-                                #             #         trigger_price,
-                                #             #         trade_type,
-                                #             #         side,
-                                #             #         signal
-                                #             #     )
-                                #             #     break
-                                #             # else:
-                                #             #     print(
-                                #             #         f"It closed below, but we are not below the level. "
-                                #             #         f"Checking next candle..."
-                                #             #     )
-                                #             #     # Calculate time difference between the current potential candle
-                                #             #     # and the initial SR level interaction
-                                #             #     time_diff = (next_candle_after_ob_time - pd.to_datetime(
-                                #             #         level_interaction_signal_time)).total_seconds() / 60
-                                #             #
-                                #             #     # Check if we've exceeded the maximum waiting time
-                                #             #     trace = 'BR-D_shorts_3'
-                                #             #     if check_time_limit(
-                                #             #             max_time_waiting_for_entry,
-                                #             #             subsequent_index,
-                                #             #             next_candle_after_ob_time,
-                                #             #             level_interaction_signal_time,
-                                #             #             time_diff,
-                                #             #             trace
-                                #             #     ):
-                                #             #         break  # Exit the loop if time limit is exceeded
-                                #
-                                #         if next_candle_after_ob['Close'] > next_candle_after_ob['Open']:
-                                #             next_candle_after_ob_time = pd.to_datetime(next_candle_after_ob['Time'])
-                                #             signal_time = next_candle_after_ob['Time']
-                                #             green_candle_low = next_candle_after_ob['Low']
-                                #             print(
-                                #                 f"NEW GREEN candle formed at index {next_index}, "
-                                #                 f"Time: {signal_time}, "
-                                #             )
-                                #             print('CANCEL STOPMARKET.1B')
-                                #             print('PLACE NEW STOPMARKET.1B')
-                                #             signal = f'-100+{subsequent_index}'
-                                #             trigger_price = next_candle_after_ob['Low']
-                                #
-                                #             s_signal, n_index, t_price = signal_triggered_output(
-                                #                 subsequent_index,
-                                #                 next_candle_after_ob_time,
-                                #                 trigger_price,
-                                #                 trade_type,
-                                #                 side,
-                                #                 signal
-                                #             )
-                                #
-                                #             subsequent_index = next_index
-                                #             time_diff = (next_candle_after_ob_time -
-                                #                          pd.to_datetime(
-                                #                              level_interaction_signal_time)).total_seconds() / 60
-                                #
-                                #             # Check if we've exceeded the maximum waiting time
-                                #             trace = 'BR-D_shorts_4'
-                                #             if check_time_limit(
-                                #                     max_time_waiting_for_entry,
-                                #                     next_index,
-                                #                     next_candle_after_ob_time,
-                                #                     level_interaction_signal_time,
-                                #                     time_diff,
-                                #                     trace
-                                #             ):
-                                #                 break  # Exit the loop if time limit is exceeded
-                                #             break  # Exit the level loop once a signal is generated
-
-                        #  ********************************************************************************************
-                        #  LONGS LOGICS BEGIN HERE
-                        #  ********************************************************************************************
-                        # REJECTION LONGS LOGIC:
-                        if previous_close is not None and previous_close > current_sr_level:
-                            if current_candle_low < current_sr_level:
-                                if current_candle_close > current_sr_level:
-                                    # Over-Under condition met for long
-                                    level_signal_count[level_column] += 1
-                                    level_interaction_signal_time = current_candle_time
-                                    print('-------------------------------------------------------------------------------')
-                                    print(f"{index} ▼▲ Long: 'Under-over' condition met, "
-                                          f"Time: {current_candle_time}, "
-                                          f"SR level: {current_sr_level}")
-
-                                    # Step 1: Find the first red candle (where close < open)
-                                    red_candle_found = False
-                                    red_candle_high = None
-                                    potential_ob_time = None
-                                    trade_type = 'rejection'
-                                    side = 'long'
-
-                                    for subsequent_index in range(index + 1, len(output_df_with_levels)):
-
-                                        potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
-                                        # Convert to datetime for time calculations
-                                        potential_ob_time = pd.to_datetime(
-                                            str(potential_ob_candle['Date']) + ' ' + str(potential_ob_candle['Time'])
-                                        )
-                                        # Calculate time difference between the current potential candle
-                                        # and the initial SR level interaction
-                                        time_diff = (potential_ob_time - pd.to_datetime(
-                                            level_interaction_signal_time)).total_seconds() / 60
-
-                                        # Check if we've exceeded the maximum waiting time
-                                        trace = 'Rejection_longs_1'
-                                        if check_time_limit(
-                                                max_time_waiting_for_entry,
-                                                subsequent_index,
-                                                potential_ob_time,
-                                                level_interaction_signal_time,
-                                                time_diff,
-                                                trace
-                                        ):
-                                            break  # Exit the loop if time limit is exceeded
-
+                                    else:
                                         print(
-                                            f"Looking for RED candle at index {subsequent_index}, "
+                                            f"Green candle found, but it's not below the level. "
+                                            f"Checking next candle...")
+
+                    #  ********************************************************************************************
+                    #  LONGS LOGICS BEGIN HERE
+                    #  ********************************************************************************************
+                    # REJECTION LONGS LOGIC:
+                    if previous_close is not None and previous_close > current_sr_level:
+                        if current_candle_low < current_sr_level:
+                            if current_candle_close > current_sr_level:
+                                # Over-Under condition met for long
+                                level_signal_count[level_column] += 1
+                                level_interaction_signal_time = current_candle_time
+                                print('-------------------------------------------------------------------------------')
+                                print(f"{index} ▼▲ Long: 'Under-over' condition met, "
+                                      f"Time: {current_candle_time}, "
+                                      f"SR level: {current_sr_level}")
+
+                                # Step 1: Find the first red candle (where close < open)
+                                red_candle_found = False
+                                red_candle_high = None
+                                potential_ob_time = None
+                                trade_type = 'rejection'
+                                side = 'long'
+
+                                for subsequent_index in range(index + 1, len(output_df_with_levels)):
+
+                                    potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
+                                    # Convert to datetime for time calculations
+                                    potential_ob_time = pd.to_datetime(
+                                        str(potential_ob_candle['Date']) + ' ' + str(potential_ob_candle['Time'])
+                                    )
+                                    # Calculate time difference between the current potential candle
+                                    # and the initial SR level interaction
+                                    time_diff = (potential_ob_time - pd.to_datetime(
+                                        level_interaction_signal_time)).total_seconds() / 60
+
+                                    # Check if we've exceeded the maximum waiting time
+                                    trace = 'Rejection_longs_1'
+                                    if check_time_limit(
+                                            max_time_waiting_for_entry,
+                                            subsequent_index,
+                                            potential_ob_time,
+                                            level_interaction_signal_time,
+                                            time_diff,
+                                            trace
+                                    ):
+                                        break  # Exit the loop if time limit is exceeded
+
+                                    print(
+                                        f"Looking for RED candle at index {subsequent_index}, "
+                                        f"Time: {potential_ob_time}"
+                                    )
+                                    # Check if it's a red candle (close < open)
+                                    if potential_ob_candle['Close'] < potential_ob_candle['Open']:
+                                        print(
+                                            f"○ Last RED candle found at index {subsequent_index}, "
                                             f"Time: {potential_ob_time}"
                                         )
-                                        # Check if it's a red candle (close < open)
-                                        if potential_ob_candle['Close'] < potential_ob_candle['Open']:
-                                            print(
-                                                f"○ Last RED candle found at index {subsequent_index}, "
-                                                f"Time: {potential_ob_time}"
-                                            )
-                                            # Check if the red candle is below the SR level
-                                            if potential_ob_candle['Close'] > current_sr_level:
-                                                red_candle_high = potential_ob_candle['High']
-                                                red_candle_found = True
+                                        # Check if the red candle is below the SR level
+                                        if potential_ob_candle['Close'] > current_sr_level:
+                                            red_candle_high = potential_ob_candle['High']
+                                            red_candle_found = True
+                                            if get_position_state():
                                                 print(
                                                     f"Red candle is above the SR level at index {subsequent_index}, "
                                                     f"Time: {potential_ob_time}"
@@ -527,179 +349,72 @@ def level_rejection_signals(
                                                 )
                                                 # break
                                             else:
-                                                print(f"Red candle found, but it's not above the level. "
-                                                      f"Checking next candle...")
+                                                print('There is an open position. No signals...'.upper())
+                                        else:
+                                            print(f"Red candle found, but it's not above the level. "
+                                                  f"Checking next candle...")
 
-                                    # Step 2: After finding the red candle, wait for the price to hit its high
-                                    # if red_candle_found:
-                                    #     # Store the time of the green candle
-                                    #     potential_ob_time = pd.to_datetime(potential_ob_time)
-                                    #     for next_index in range(subsequent_index + 1, len(output_df_with_levels)):
-                                    #         next_candle_after_ob = output_df_with_levels.iloc[next_index]
-                                    #         signal_time = next_candle_after_ob['Time']
-                                    #         # Calculate the time difference in minutes
-                                    #         # between the green candle and the current candle
-                                    #         time_diff = (potential_ob_time -
-                                    #                      pd.to_datetime(level_interaction_signal_time)).total_seconds() / 60
-                                    #         print(
-                                    #             f"Waiting for next candle to close above RED candle high at {next_index},"
-                                    #             f"Time: {signal_time}"
-                                    #         )
-                                    #
-                                    #         # Check if we've exceeded the maximum waiting time
-                                    #         trace = 'Rejection_longs_2'
-                                    #         if check_time_limit(
-                                    #                 max_time_waiting_for_entry,
-                                    #                 next_index,
-                                    #                 potential_ob_time,
-                                    #                 level_interaction_signal_time,
-                                    #                 time_diff,
-                                    #                 trace
-                                    #         ):
-                                    #             break  # Exit the loop if time limit is exceeded
-                                    #
-                                    #         # Price hits the high of the red candle
-                                    #         # if next_candle_after_ob['Close'] > red_candle_high:
-                                    #         #     print('!!! Stopmarket order triggered !!!')
-                                    #
-                                    #             # # Store the time of the next candle after OB
-                                    #             # next_candle_after_ob_time = pd.to_datetime(next_candle_after_ob['Time'])
-                                    #             # if next_candle_after_ob['Close'] > current_sr_level:
-                                    #             #     # signal = 100  # Long signal
-                                    #             #     signal = f'100+{next_index}'
-                                    #             #     trigger_price = next_candle_after_ob['Close']
-                                    #             #
-                                    #             #     s_signal, n_index = signal_triggered_output(
-                                    #             #         next_index,
-                                    #             #         signal_time,
-                                    #             #         trigger_price,
-                                    #             #         trade_type,
-                                    #             #         side,
-                                    #             #         signal
-                                    #             #     )
-                                    #             #     break
-                                    #             # else:
-                                    #             #     print(
-                                    #             #         f"It closed above, but we are not above the level. "
-                                    #             #         f"Checking next candle..."
-                                    #             #     )
-                                    #             #     # Calculate time difference between the current potential candle
-                                    #             #     # and the initial SR level interaction
-                                    #             #     time_diff = (next_candle_after_ob_time - pd.to_datetime(
-                                    #             #         level_interaction_signal_time)).total_seconds() / 60
-                                    #             #
-                                    #             #     # Check if we've exceeded the maximum waiting time
-                                    #             #     trace = 'Rejection_longs_3'
-                                    #             #     if check_time_limit(
-                                    #             #             max_time_waiting_for_entry,
-                                    #             #             subsequent_index,
-                                    #             #             next_candle_after_ob_time,
-                                    #             #             level_interaction_signal_time,
-                                    #             #             time_diff,
-                                    #             #             trace
-                                    #             #     ):
-                                    #             #         break  # Exit the loop if time limit is exceeded
-                                    #
-                                    #         if next_candle_after_ob['Close'] < next_candle_after_ob['Open']:
-                                    #             next_candle_after_ob_time = pd.to_datetime(next_candle_after_ob['Time'])
-                                    #             signal_time = next_candle_after_ob['Time']
-                                    #             red_candle_high = next_candle_after_ob['High']
-                                    #             print(
-                                    #                 f"NEW RED candle formed at index {next_index}, "
-                                    #                 f"Time: {signal_time}, "
-                                    #             )
-                                    #             print('CANCEL STOPMARKET.2A')
-                                    #             print('PLACE NEW STOPMARKET.2A')
-                                    #             signal = f'100+{subsequent_index}'
-                                    #             trigger_price = next_candle_after_ob['High']
-                                    #
-                                    #             s_signal, n_index, t_price = signal_triggered_output(
-                                    #                 subsequent_index,
-                                    #                 signal_time,
-                                    #                 trigger_price,
-                                    #                 trade_type,
-                                    #                 side,
-                                    #                 signal
-                                    #             )
-                                    #
-                                    #             subsequent_index = next_index
-                                    #             time_diff = (next_candle_after_ob_time -
-                                    #                          pd.to_datetime(
-                                    #                              level_interaction_signal_time)).total_seconds() / 60
-                                    #
-                                    #             # Check if we've exceeded the maximum waiting time
-                                    #             trace = 'Rejection_longs_4'
-                                    #             if check_time_limit(
-                                    #                     max_time_waiting_for_entry,
-                                    #                     next_index,
-                                    #                     next_candle_after_ob_time,
-                                    #                     level_interaction_signal_time,
-                                    #                     time_diff,
-                                    #                     trace
-                                    #             ):
-                                    #                 break  # Exit the loop if time limit is exceeded
-                                    #             break   # Exit the loop if signal generated
-
-                        # BR-O LOGIC BEGIN HERE ****************************************************************************
-                        # Previous close was below level
-                        if previous_close is not None and previous_close < current_sr_level:
+                    # BR-O LOGIC BEGIN HERE ****************************************************************************
+                    # Previous close was below level
+                    if previous_close is not None and previous_close < current_sr_level:
+                        if current_candle_close > current_sr_level:
                             if current_candle_close > current_sr_level:
-                                if current_candle_close > current_sr_level:
-                                    # Under condition met for long
-                                    level_signal_count[level_column] += 1
-                                    level_interaction_signal_time = current_candle_time
-                                    print('-------------------------------------------------------------------------------')
-                                    print(f"{index} ▲ Long: 'Over' condition met, "
-                                          f"Time: {current_candle_time}, "
-                                          f"SR level: {current_sr_level}")
+                                # Under condition met for long
+                                level_signal_count[level_column] += 1
+                                level_interaction_signal_time = current_candle_time
+                                print('-------------------------------------------------------------------------------')
+                                print(f"{index} ▲ Long: 'Over' condition met, "
+                                      f"Time: {current_candle_time}, "
+                                      f"SR level: {current_sr_level}")
 
-                                    # Step 1: Find the first red candle (where close < open)
-                                    red_candle_found = False
-                                    red_candle_high = None
-                                    potential_ob_time = None
-                                    trade_type = 'BR-O'
-                                    side = 'Long'
+                                # Step 1: Find the first red candle (where close < open)
+                                red_candle_found = False
+                                red_candle_high = None
+                                potential_ob_time = None
+                                trade_type = 'BR-O'
+                                side = 'Long'
 
-                                    for subsequent_index in range(index + 1, len(output_df_with_levels)):
+                                for subsequent_index in range(index + 1, len(output_df_with_levels)):
 
-                                        potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
+                                    potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
 
-                                        # Convert to datetime for time calculations
-                                        potential_ob_time = pd.to_datetime(potential_ob_candle['Time'])
+                                    # Convert to datetime for time calculations
+                                    potential_ob_time = pd.to_datetime(potential_ob_candle['Time'])
 
-                                        # Calculate time difference between the current potential candle
-                                        # and the initial SR level interaction
-                                        time_diff = (potential_ob_time - pd.to_datetime(
-                                            level_interaction_signal_time)).total_seconds() / 60
+                                    # Calculate time difference between the current potential candle
+                                    # and the initial SR level interaction
+                                    time_diff = (potential_ob_time - pd.to_datetime(
+                                        level_interaction_signal_time)).total_seconds() / 60
 
-                                        # Check if we've exceeded the maximum waiting time
-                                        trace = 'BR-O_longs_1'
-                                        if check_time_limit(
-                                                max_time_waiting_for_entry,
-                                                subsequent_index,
-                                                potential_ob_time,
-                                                level_interaction_signal_time,
-                                                time_diff,
-                                                trace
-                                        ):
-                                            break  # Exit the loop if time limit is exceeded
+                                    # Check if we've exceeded the maximum waiting time
+                                    trace = 'BR-O_longs_1'
+                                    if check_time_limit(
+                                            max_time_waiting_for_entry,
+                                            subsequent_index,
+                                            potential_ob_time,
+                                            level_interaction_signal_time,
+                                            time_diff,
+                                            trace
+                                    ):
+                                        break  # Exit the loop if time limit is exceeded
 
+                                    print(
+                                        f"Looking for RED candle at index {subsequent_index}, "
+                                        f"Time: {potential_ob_time}"
+                                    )
+
+                                    # Check if it's a red candle (close < open)
+                                    if potential_ob_candle['Close'] < potential_ob_candle['Open']:
                                         print(
-                                            f"Looking for RED candle at index {subsequent_index}, "
+                                            f"○ Last RED candle found at index {subsequent_index}, "
                                             f"Time: {potential_ob_time}"
                                         )
-
-                                        # Check if it's a red candle (close < open)
-                                        if potential_ob_candle['Close'] < potential_ob_candle['Open']:
-                                            print(
-                                                f"○ Last RED candle found at index {subsequent_index}, "
-                                                f"Time: {potential_ob_time}"
-                                            )
-                                            # Check if the red candle is above the SR level
-                                            if potential_ob_candle['Close'] > current_sr_level:
-                                                # Candle must be above the level
-                                                red_candle_high = potential_ob_candle['High']
-                                                red_candle_found = True
+                                        # Check if the red candle is above the SR level
+                                        if potential_ob_candle['Close'] > current_sr_level:
+                                            # Candle must be above the level
+                                            red_candle_high = potential_ob_candle['High']
+                                            red_candle_found = True
+                                            if get_position_state():
                                                 print(
                                                     f"⦿ It's above the level at index {subsequent_index}, "
                                                     f"Time: {potential_ob_time}"
@@ -718,129 +433,130 @@ def level_rejection_signals(
                                                 )
                                                 # break
                                             else:
-                                                print(
-                                                    f"Red candle found, but it's not below the level. "
-                                                    f"Checking next candle...")
+                                                print('There is an open position. No signals...'.upper())
+                                        else:
+                                            print(
+                                                f"Red candle found, but it's not above the level. "
+                                                f"Checking next candle...")
 
-                                    # Step 2: After finding the red candle, wait for the price to hit its high
-                                    # if red_candle_found:
-                                    #     # Store the time of the red candle
-                                    #     potential_ob_time = pd.to_datetime(potential_ob_time)
-                                    #     for next_index in range(subsequent_index + 1, len(output_df_with_levels)):
-                                    #         next_candle_after_ob = output_df_with_levels.iloc[next_index]
-                                    #         signal_time = next_candle_after_ob['Time']
-                                    #         # Calculate the time difference in minutes
-                                    #         # between the red candle and the current candle
-                                    #         time_diff = (potential_ob_time -
-                                    #                      pd.to_datetime(level_interaction_signal_time)).total_seconds() / 60
-                                    #
-                                    #         print(
-                                    #             f"Waiting for next candle to close above RED candle high at {next_index},"
-                                    #             f"Time: {signal_time}"
-                                    #         )
-                                    #
-                                    #         # Check if we've exceeded the maximum waiting time
-                                    #         trace = 'BR-O_longs_2'
-                                    #         if check_time_limit(
-                                    #                 max_time_waiting_for_entry,
-                                    #                 next_index,
-                                    #                 potential_ob_time,
-                                    #                 level_interaction_signal_time,
-                                    #                 time_diff,
-                                    #                 trace
-                                    #         ):
-                                    #             break  # Exit the loop if time limit is exceeded
-                                    #
-                                    #         # THIS IS THE ACTUAL SIGNAL FOR LONG TRADE OPEN
-                                    #         # Price hits the high of the red candle
-                                    #         # if next_candle_after_ob['Close'] > red_candle_high:
-                                    #         #     print('!!! Stopmarket order triggered !!!')
-                                    #
-                                    #             # # Store the time of the next candle after OB
-                                    #             # next_candle_after_ob_time = pd.to_datetime(next_candle_after_ob['Time'])
-                                    #             # if next_candle_after_ob['Close'] > current_sr_level:
-                                    #             #     # signal = 100  # Long signal
-                                    #             #     signal = f'100+{next_index}'
-                                    #             #     trigger_price = next_candle_after_ob['Close']
-                                    #             #
-                                    #             #     s_signal, n_index = signal_triggered_output(
-                                    #             #         next_index,
-                                    #             #         signal_time,
-                                    #             #         trigger_price,
-                                    #             #         trade_type,
-                                    #             #         side,
-                                    #             #         signal
-                                    #             #     )
-                                    #             #     break
-                                    #             # else:
-                                    #             #     print(
-                                    #             #         f"It closed above, but we are not above the level. "
-                                    #             #         f"Checking next candle..."
-                                    #             #     )
-                                    #             #     # Calculate time difference between the current potential candle
-                                    #             #     # and the initial SR level interaction
-                                    #             #     time_diff = (next_candle_after_ob_time - pd.to_datetime(
-                                    #             #         level_interaction_signal_time)).total_seconds() / 60
-                                    #             #
-                                    #             #     # Check if we've exceeded the maximum waiting time
-                                    #             #     trace = 'BR-O_longs_3'
-                                    #             #     if check_time_limit(
-                                    #             #             max_time_waiting_for_entry,
-                                    #             #             subsequent_index,
-                                    #             #             next_candle_after_ob_time,
-                                    #             #             level_interaction_signal_time,
-                                    #             #             time_diff,
-                                    #             #             trace
-                                    #             #     ):
-                                    #             #         break  # Exit the loop if time limit is exceeded
-                                    #
-                                    #         if next_candle_after_ob['Close'] < next_candle_after_ob['Open']:
-                                    #             next_candle_after_ob_time = pd.to_datetime(next_candle_after_ob['Time'])
-                                    #             signal_time = next_candle_after_ob['Time']
-                                    #             red_candle_high = next_candle_after_ob['High']
-                                    #             print(
-                                    #                 f"NEW RED candle formed at index {next_index}, "
-                                    #                 f"Time: {signal_time}, "
-                                    #             )
-                                    #             print('CANCEL STOPMARKET.2B')
-                                    #             print('PLACE NEW STOPMARKET.2B')
-                                    #             signal = f'100+{subsequent_index}'
-                                    #             trigger_price = next_candle_after_ob['High']
-                                    #
-                                    #             s_signal, n_index, t_price = signal_triggered_output(
-                                    #                 subsequent_index,
-                                    #                 next_candle_after_ob_time,
-                                    #                 trigger_price,
-                                    #                 trade_type,
-                                    #                 side,
-                                    #                 signal
-                                    #             )
-                                    #
-                                    #             subsequent_index = next_index
-                                    #             time_diff = (next_candle_after_ob_time -
-                                    #                          pd.to_datetime(
-                                    #                              level_interaction_signal_time)).total_seconds() / 60
-                                    #
-                                    #             # Check if we've exceeded the maximum waiting time
-                                    #             trace = 'BR-O_longs_4'
-                                    #             if check_time_limit(
-                                    #                     max_time_waiting_for_entry,
-                                    #                     next_index,
-                                    #                     next_candle_after_ob_time,
-                                    #                     level_interaction_signal_time,
-                                    #                     time_diff,
-                                    #                     trace
-                                    #             ):
-                                    #                 break  # Exit the loop if time limit is exceeded
-                                    #
-                                    #             break
-                                    # break  # Exit the level loop once a signal is generated
-                    else:
-                        print('-------------------------------------------------------------------------------')
-                        print(f'Level interactions number ({level_interactions_threshold}) reached '
-                              f'for level {current_sr_level}')
-            else:
-                print('There is an open position. No signals...')
+                                # Step 2: After finding the red candle, wait for the price to hit its high
+                                # if red_candle_found:
+                                #     # Store the time of the red candle
+                                #     potential_ob_time = pd.to_datetime(potential_ob_time)
+                                #     for next_index in range(subsequent_index + 1, len(output_df_with_levels)):
+                                #         next_candle_after_ob = output_df_with_levels.iloc[next_index]
+                                #         signal_time = next_candle_after_ob['Time']
+                                #         # Calculate the time difference in minutes
+                                #         # between the red candle and the current candle
+                                #         time_diff = (potential_ob_time -
+                                #                      pd.to_datetime(level_interaction_signal_time)).total_seconds() / 60
+                                #
+                                #         print(
+                                #             f"Waiting for next candle to close above RED candle high at {next_index},"
+                                #             f"Time: {signal_time}"
+                                #         )
+                                #
+                                #         # Check if we've exceeded the maximum waiting time
+                                #         trace = 'BR-O_longs_2'
+                                #         if check_time_limit(
+                                #                 max_time_waiting_for_entry,
+                                #                 next_index,
+                                #                 potential_ob_time,
+                                #                 level_interaction_signal_time,
+                                #                 time_diff,
+                                #                 trace
+                                #         ):
+                                #             break  # Exit the loop if time limit is exceeded
+                                #
+                                #         # THIS IS THE ACTUAL SIGNAL FOR LONG TRADE OPEN
+                                #         # Price hits the high of the red candle
+                                #         # if next_candle_after_ob['Close'] > red_candle_high:
+                                #         #     print('!!! Stopmarket order triggered !!!')
+                                #
+                                #             # # Store the time of the next candle after OB
+                                #             # next_candle_after_ob_time = pd.to_datetime(next_candle_after_ob['Time'])
+                                #             # if next_candle_after_ob['Close'] > current_sr_level:
+                                #             #     # signal = 100  # Long signal
+                                #             #     signal = f'100+{next_index}'
+                                #             #     trigger_price = next_candle_after_ob['Close']
+                                #             #
+                                #             #     s_signal, n_index = signal_triggered_output(
+                                #             #         next_index,
+                                #             #         signal_time,
+                                #             #         trigger_price,
+                                #             #         trade_type,
+                                #             #         side,
+                                #             #         signal
+                                #             #     )
+                                #             #     break
+                                #             # else:
+                                #             #     print(
+                                #             #         f"It closed above, but we are not above the level. "
+                                #             #         f"Checking next candle..."
+                                #             #     )
+                                #             #     # Calculate time difference between the current potential candle
+                                #             #     # and the initial SR level interaction
+                                #             #     time_diff = (next_candle_after_ob_time - pd.to_datetime(
+                                #             #         level_interaction_signal_time)).total_seconds() / 60
+                                #             #
+                                #             #     # Check if we've exceeded the maximum waiting time
+                                #             #     trace = 'BR-O_longs_3'
+                                #             #     if check_time_limit(
+                                #             #             max_time_waiting_for_entry,
+                                #             #             subsequent_index,
+                                #             #             next_candle_after_ob_time,
+                                #             #             level_interaction_signal_time,
+                                #             #             time_diff,
+                                #             #             trace
+                                #             #     ):
+                                #             #         break  # Exit the loop if time limit is exceeded
+                                #
+                                #         if next_candle_after_ob['Close'] < next_candle_after_ob['Open']:
+                                #             next_candle_after_ob_time = pd.to_datetime(next_candle_after_ob['Time'])
+                                #             signal_time = next_candle_after_ob['Time']
+                                #             red_candle_high = next_candle_after_ob['High']
+                                #             print(
+                                #                 f"NEW RED candle formed at index {next_index}, "
+                                #                 f"Time: {signal_time}, "
+                                #             )
+                                #             print('CANCEL STOPMARKET.2B')
+                                #             print('PLACE NEW STOPMARKET.2B')
+                                #             signal = f'100+{subsequent_index}'
+                                #             trigger_price = next_candle_after_ob['High']
+                                #
+                                #             s_signal, n_index, t_price = signal_triggered_output(
+                                #                 subsequent_index,
+                                #                 next_candle_after_ob_time,
+                                #                 trigger_price,
+                                #                 trade_type,
+                                #                 side,
+                                #                 signal
+                                #             )
+                                #
+                                #             subsequent_index = next_index
+                                #             time_diff = (next_candle_after_ob_time -
+                                #                          pd.to_datetime(
+                                #                              level_interaction_signal_time)).total_seconds() / 60
+                                #
+                                #             # Check if we've exceeded the maximum waiting time
+                                #             trace = 'BR-O_longs_4'
+                                #             if check_time_limit(
+                                #                     max_time_waiting_for_entry,
+                                #                     next_index,
+                                #                     next_candle_after_ob_time,
+                                #                     level_interaction_signal_time,
+                                #                     time_diff,
+                                #                     trace
+                                #             ):
+                                #                 break  # Exit the loop if time limit is exceeded
+                                #
+                                #             break
+                                # break  # Exit the level loop once a signal is generated
+                else:
+                    print('-------------------------------------------------------------------------------')
+                    print(f'Level interactions number ({level_interactions_threshold}) reached '
+                          f'for level {current_sr_level}')
+
     return (
             level_signal_count,
             s_signal,

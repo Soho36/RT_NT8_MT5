@@ -30,12 +30,13 @@ position_state_path = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\positio
 
 current_order_direction_path = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\current_order_direction.txt'
 
+
 def leave_only_last_line():     # Clear file before starting the script
     with open(mt5_logging_file_path, 'r', encoding='utf-16') as file:
         lines = file.readlines()
         # Check if there's at least one line to keep
         if lines:
-            with open(mt5_logging_file_path, 'w', encoding='utf-16'):
+            with open(mt5_logging_file_path, 'w', encoding='utf-16') as file:
                 file.write(lines[-1])  # Write only the first line back to the file
 
 
@@ -104,9 +105,8 @@ def get_position_state():
 
 def get_current_pending_order_direction():
     with open(current_order_direction_path, 'r', encoding='utf-8') as file:
-        current_pending_order = file.read()
-    if current_pending_order == 'buy' or 'sell':
-        return True
+        current_pending_order = file.read().strip()
+        return current_pending_order
 
 
 def save_order_parameters_to_file(line_order_parameters):   # Called from orders_sender.py
