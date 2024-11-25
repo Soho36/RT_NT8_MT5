@@ -99,8 +99,7 @@ def remove_expired_levels(level_lifetime_minutes, dataframe_from_log):
 def get_position_state():
     with open(position_state_path, 'r', encoding='utf-8') as file:
         state = file.read()
-    if state == 'closed':
-        return True
+        return state
 
 
 def get_current_pending_order_direction():
