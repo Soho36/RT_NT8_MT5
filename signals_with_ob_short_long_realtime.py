@@ -164,10 +164,10 @@ def level_rejection_signals(
                                                     side,
                                                     signal
                                                 )
-                                                # break
+                                                # continue
                                             else:
                                                 print('There is an open position. No signals...'.upper())
-                                                break
+                                                # break
 
                                         else:
                                             print(
@@ -252,10 +252,10 @@ def level_rejection_signals(
                                                 side,
                                                 signal
                                             )
-                                            # break  # Exit the loop, as we have found the valid green candle below the level
+                                            # continue  # Exit the loop, as we have found the valid green candle below the level
                                         else:
                                             print('There is an open position. No signals...'.upper())
-                                            break
+                                            # break
 
                                     else:
                                         print(
@@ -338,15 +338,14 @@ def level_rejection_signals(
                                                     side,
                                                     signal
                                                 )
-                                                # break
+                                                # continue
                                             else:
                                                 print('There is an open position. No signals...'.upper())
-                                                break
+                                                # break
 
                                         else:
                                             print(f"Red candle found, but it's not above the level. "
                                                   f"Checking next candle...")
-
 
                     # BR-O LOGIC BEGIN HERE ****************************************************************************
                     # Previous close was below level
@@ -424,14 +423,10 @@ def level_rejection_signals(
                                                 side,
                                                 signal
                                             )
+                                            # break
                                         else:
-
-                                            print(
-                                                f"Red candle found, but it's not below the level. "
-                                                f"Checking next candle...")
-
                                             print('There is an open position. No signals...'.upper())
-                                            break
+                                            # break
                                     else:
                                         print(
                                             f"Red candle found, but it's not above the level. "

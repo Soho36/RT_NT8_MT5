@@ -51,9 +51,11 @@ def send_buy_sell_orders(
                                        + last_candle_high) + stop_loss_offset, 3)
             take_profit_price_2 = round((((last_candle_high - stop_loss_price) * 2)  # R/R hardcoded
                                          + last_candle_high) + stop_loss_offset, 3)
+            take_profit_price_3 = round((((last_candle_high - stop_loss_price) * 5)  # R/R hardcoded
+                                         + last_candle_high) + stop_loss_offset, 3)
 
             line_order_parameters_nt8 = \
-                f'Buy, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
+                f'Buy, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}, {take_profit_price_3}'
             line_order_cancel = 'cancel'
 
             if get_current_pending_order_direction() == 'sell':   # If there is an active sell order:
@@ -91,9 +93,11 @@ def send_buy_sell_orders(
                                       + stop_loss_offset, 3)
             take_profit_price_2 = round((last_candle_low - ((stop_loss_price - last_candle_low) * 2))   # R/R hardcoded
                                         + stop_loss_offset, 3)
+            take_profit_price_3 = round((last_candle_low - ((stop_loss_price - last_candle_low) * 5))  # R/R hardcoded
+                                        + stop_loss_offset, 3)
 
             line_order_parameters_nt8 = \
-                f'Sell, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
+                f'Sell, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}, {take_profit_price_3}'
             line_order_cancel = 'cancel'
 
             if get_current_pending_order_direction() == 'buy':   # If there is an active order:
