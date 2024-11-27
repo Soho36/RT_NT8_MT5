@@ -316,7 +316,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
 					// Check only orders in working or accepted state
 					if (order.OrderState == OrderState.Working || order.OrderState == OrderState.Accepted)
-					{
+					{	
 						// Check if the order is being tracked in the dictionary
 						if (orderCreationCandle.TryGetValue(order.OrderId, out int orderCandleIndex))
 						{
@@ -327,10 +327,6 @@ namespace NinjaTrader.NinjaScript.Strategies
 								ordersToCancel.Add(order.OrderId);
 								Print($"Order {order.Name} is {candleAge} candles old and will be canceled.");
 							}
-						}
-						else
-						{
-							Print($"Order {order.Name} is not tracked in orderCreationCandle.");
 						}
 					}
 				}

@@ -52,6 +52,7 @@ def send_buy_sell_orders(
             take_profit_price_2 = round((((last_candle_high - stop_loss_price) * 2)  # R/R hardcoded
                                          + last_candle_high) + stop_loss_offset, 3)
 
+
             line_order_parameters_nt8 = \
                 f'Buy, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}'
             line_order_cancel = 'cancel'
