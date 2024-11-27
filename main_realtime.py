@@ -93,9 +93,9 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
     # SIGNALS
     (
         over_under_counter,
-        s_signal,
-        n_index,
-        stop_market_price,
+        s_signal,               # signal 100 or -100
+        n_index,                # index
+        stop_market_price,      # stop-market order price
         levels_to_remove,
         candle_counter
     ) = level_rejection_signals(

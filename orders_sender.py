@@ -43,7 +43,7 @@ def send_buy_sell_orders(
 
             winsound.PlaySound('chord.wav', winsound.SND_FILENAME)
             print()
-            print('▲ ▲ ▲ Buy order has been sent to NT8! ▲ ▲ ▲'.upper())
+            print(f'{n_index} ▲ ▲ ▲ Buy order has been sent to NT8! ▲ ▲ ▲'.upper())
 
             # ORDER PARAMETERS
             stop_loss_price = round(last_candle_low - stop_loss_offset, 3)
@@ -82,7 +82,7 @@ def send_buy_sell_orders(
             # Play sound to indicate order sent
             winsound.PlaySound('chord.wav', winsound.SND_FILENAME)
             print()
-            print('▼ ▼ ▼ Sell order has been sent to NT8! ▼ ▼ ▼'.upper())
+            print(f'{n_index} ▼ ▼ ▼ Sell order has been sent to NT8! ▼ ▼ ▼'.upper())
 
             # Order parameters
             stop_loss_price = round(last_candle_high + stop_loss_offset, 3)
