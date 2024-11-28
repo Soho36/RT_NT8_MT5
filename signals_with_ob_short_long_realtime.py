@@ -80,10 +80,10 @@ def level_rejection_signals(
         current_candle_close = row['Close']
         current_candle_high = row['High']
         current_candle_low = row['Low']
-        current_candle_date = row['Date']
+        # current_candle_date = row['Date']
         current_candle_time = row['Time']
 
-        subsequent_index = None  # Initialize subsequent_index
+        # subsequent_index = None  # Initialize subsequent_index
 
         # Loop through each level column
         for level_column in sr_level_columns:
@@ -109,6 +109,11 @@ def level_rejection_signals(
                                 print(f"{index} ▲▼ Short: 'Over-under' condition met, "
                                       f"Time: {current_candle_time}, "
                                       f"SR level: {current_sr_level}")
+
+                                # Step 1: Find the first green candle (where close > open)
+
+                                # green_candle_low = None
+                                # potential_ob_time = None
 
                                 trade_type = 'rejection'
                                 side = 'short'
@@ -146,7 +151,8 @@ def level_rejection_signals(
                                         if potential_ob_candle['Close'] < current_sr_level:
 
                                             green_candle_low = potential_ob_candle['Low']
-                                            green_candle_found = True
+                                            print(f'Current green candle low: {green_candle_low}')
+                                            # green_candle_found = True
                                             if get_position_state() == '' or get_position_state() == 'closed':
                                                 print(
                                                     f"○ Green candle is below the SR level at index {subsequent_index}, "
@@ -154,12 +160,12 @@ def level_rejection_signals(
                                                 )
                                                 print('PLACE STOPMARKET.1A')
                                                 signal = f'-100+{subsequent_index}'
-                                                trigger_price = potential_ob_candle['Low']
+                                                # trigger_price = potential_ob_candle['Low']
 
                                                 s_signal, n_index, t_price = signal_triggered_output(
                                                     subsequent_index,
                                                     potential_ob_time,
-                                                    trigger_price,
+                                                    green_candle_low,
                                                     trade_type,
                                                     side,
                                                     signal
@@ -167,7 +173,7 @@ def level_rejection_signals(
                                                 # continue
                                             else:
                                                 print('There is an open position. No signals...'.upper())
-                                                # break
+                                                break
 
                                         else:
                                             print(
@@ -189,9 +195,9 @@ def level_rejection_signals(
                                   f"SR level: {current_sr_level}")
 
                             # Step 1: Find the first green candle (where close > open)
-                            green_candle_found = False
-                            green_candle_low = None
-                            potential_ob_time = None
+
+                            # green_candle_low = None
+                            # potential_ob_time = None
                             trade_type = 'BR-D'
                             side = 'short'
 
@@ -234,7 +240,8 @@ def level_rejection_signals(
                                     # Check if the green candle is below the SR level
                                     if potential_ob_candle['Close'] < current_sr_level:
                                         green_candle_low = potential_ob_candle['Low']
-                                        green_candle_found = True
+                                        # green_candle_found = True
+                                        print(f'Current green candle low: {green_candle_low}')
                                         if get_position_state() == '' or get_position_state() == 'closed':
                                             print(
                                                 f"⦿ It's below the level at index {subsequent_index}, "
@@ -242,12 +249,12 @@ def level_rejection_signals(
                                             )
                                             print('PLACE STOPMARKET.1B')
                                             signal = f'-100+{subsequent_index}'
-                                            trigger_price = potential_ob_candle['Low']
+                                            # trigger_price = potential_ob_candle['Low']
 
                                             s_signal, n_index, t_price = signal_triggered_output(
                                                 subsequent_index,
                                                 potential_ob_time,
-                                                trigger_price,
+                                                green_candle_low,
                                                 trade_type,
                                                 side,
                                                 signal
@@ -255,7 +262,7 @@ def level_rejection_signals(
                                             # continue  # Exit the loop, as we have found the valid green candle below the level
                                         else:
                                             print('There is an open position. No signals...'.upper())
-                                            # break
+                                            break
 
                                     else:
                                         print(
@@ -278,9 +285,9 @@ def level_rejection_signals(
                                       f"SR level: {current_sr_level}")
 
                                 # Step 1: Find the first red candle (where close < open)
-                                red_candle_found = False
-                                red_candle_high = None
-                                potential_ob_time = None
+                                # red_candle_found = False
+                                # red_candle_high = None
+                                # potential_ob_time = None
                                 trade_type = 'rejection'
                                 side = 'long'
 
@@ -320,7 +327,8 @@ def level_rejection_signals(
                                         # Check if the red candle is below the SR level
                                         if potential_ob_candle['Close'] > current_sr_level:
                                             red_candle_high = potential_ob_candle['High']
-                                            red_candle_found = True
+                                            print(f'Current red candle high: {red_candle_high}')
+                                            # red_candle_found = True
                                             if get_position_state() == '' or get_position_state() == 'closed':
                                                 print(
                                                     f"Red candle is above the SR level at index {subsequent_index}, "
@@ -328,12 +336,12 @@ def level_rejection_signals(
                                                 )
                                                 print('PLACE STOPMARKET.2A')
                                                 signal = f'100+{subsequent_index}'
-                                                trigger_price = potential_ob_candle['High']
+                                                # trigger_price = potential_ob_candle['High']
 
                                                 s_signal, n_index, t_price = signal_triggered_output(
                                                     subsequent_index,
                                                     potential_ob_time,
-                                                    trigger_price,
+                                                    red_candle_high,
                                                     trade_type,
                                                     side,
                                                     signal
@@ -341,7 +349,7 @@ def level_rejection_signals(
                                                 # continue
                                             else:
                                                 print('There is an open position. No signals...'.upper())
-                                                # break
+                                                break
 
                                         else:
                                             print(f"Red candle found, but it's not above the level. "
@@ -360,9 +368,9 @@ def level_rejection_signals(
                                   f"SR level: {current_sr_level}")
 
                             # Step 1: Find the first red candle (where close < open)
-                            red_candle_found = False
-                            red_candle_high = None
-                            potential_ob_time = None
+                            # red_candle_found = False
+                            # red_candle_high = None
+                            # potential_ob_time = None
                             trade_type = 'BR-O'
                             side = 'Long'
 
@@ -405,7 +413,8 @@ def level_rejection_signals(
                                     if potential_ob_candle['Close'] > current_sr_level:
                                         # Candle must be above the level
                                         red_candle_high = potential_ob_candle['High']
-                                        red_candle_found = True
+                                        print(f'Current red candle high: {red_candle_high}')
+                                        # red_candle_found = True
                                         if get_position_state() == '' or get_position_state() == 'closed':
                                             print(
                                                 f"⦿ It's above the level at index {subsequent_index}, "
@@ -413,12 +422,12 @@ def level_rejection_signals(
                                             )
                                             print('PLACE STOPMARKET.2B')
                                             signal = f'100+{subsequent_index}'
-                                            trigger_price = potential_ob_candle['High']
+                                            # trigger_price = potential_ob_candle['High']
 
                                             s_signal, n_index, t_price = signal_triggered_output(
                                                 subsequent_index,
                                                 potential_ob_time,
-                                                trigger_price,
+                                                red_candle_high,
                                                 trade_type,
                                                 side,
                                                 signal
@@ -426,7 +435,7 @@ def level_rejection_signals(
                                             # break
                                         else:
                                             print('There is an open position. No signals...'.upper())
-                                            # break
+                                            break
                                     else:
                                         print(
                                             f"Red candle found, but it's not above the level. "
