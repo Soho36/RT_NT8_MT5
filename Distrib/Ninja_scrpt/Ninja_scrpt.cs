@@ -53,9 +53,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
 		// Track whether stop losses have been moved to breakeven
 		bool stopLossMovedToBreakevenLong1 = false;
-		bool stopLossMovedToBreakevenLong3 = false;
 		bool stopLossMovedToBreakevenShort1 = false;
-		bool stopLossMovedToBreakevenShort3 = false;
 
         protected override void OnStateChange()
         {
@@ -252,18 +250,16 @@ namespace NinjaTrader.NinjaScript.Strategies
 		    {
 		        if (Close[0] >= targetPrice1 - 1 * TickSize)
 		        {
-		            // Move stop loss to breakeven (entry price)
+		            // Move stop loss to breakeven (entry price) for Long2
 		            SetStopLoss("Long2", CalculationMode.Price, Position.AveragePrice, false);
 		            Print($"Stop loss moved to breakeven for Long2 at price: {Position.AveragePrice}");
-					stopLossMovedToBreakevenLong1 = true; // Set flag to prevent repeated execution
-		        
-				
-		            // Move stop loss to breakeven (entry price)
+					
+					// Move stop loss to breakeven (entry price) for Long3
 		            SetStopLoss("Long3", CalculationMode.Price, Position.AveragePrice, false);
 		            Print($"Stop loss moved to breakeven for Long3 at price: {Position.AveragePrice}");
-					stopLossMovedToBreakevenLong1 = true; // Set flag to prevent repeated execution
+					
+					stopLossMovedToBreakevenLong1 = true; // Set flag to prevent repeated execution					            
 		        }
-				
 		    }
 
 		    // Move stop to breakeven for short positions once TP1 is reached
@@ -271,15 +267,14 @@ namespace NinjaTrader.NinjaScript.Strategies
 		    {
 		        if (Close[0] <= targetPrice1 + 1 * TickSize)
 		        {
-		            // Move stop loss to breakeven (entry price)
+		            // Move stop loss to breakeven (entry price) for Short2
 		            SetStopLoss("Short2", CalculationMode.Price, Position.AveragePrice, false);
 		            Print($"Stop loss moved to breakeven for Short2 at price: {Position.AveragePrice}");
-					stopLossMovedToBreakevenShort1 = true; // Set flag to prevent repeated execution
-		        
-				
-		            // Move stop loss to breakeven (entry price)
+					
+					// Move stop loss to breakeven (entry price) for Short3
 		            SetStopLoss("Short3", CalculationMode.Price, Position.AveragePrice, false);
 		            Print($"Stop loss moved to breakeven for Short3 at price: {Position.AveragePrice}");
+					
 					stopLossMovedToBreakevenShort1 = true; // Set flag to prevent repeated execution
 		        }
 		    }
