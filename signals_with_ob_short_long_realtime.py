@@ -1,5 +1,5 @@
 import pandas as pd
-from data_handling_realtime import get_position_state
+# from data_handling_realtime import get_position_state
 
 """
 Main function analyzing price interaction with levels and long/short signals generation logics
@@ -12,12 +12,13 @@ def level_rejection_signals(
         level_interactions_threshold,
         max_time_waiting_for_entry
 ):
-
+    signals_threshold = 5
     n_index = None
     s_signal = None
     t_price = None
     s_time = None
     candle_counter = 0
+    signals_counter = 0
     levels_to_remove = []  # List to queue levels for deletion
 
     # Create a dictionary to track signal count per level
@@ -81,21 +82,15 @@ def level_rejection_signals(
         current_candle_close = row['Close']
         current_candle_high = row['High']
         current_candle_low = row['Low']
-        # current_candle_date = row['Date']
         current_candle_time = row['Time']
 
-        # subsequent_index = None  # Initialize subsequent_index
-        signals_threshold = 3
-        signals_count = 0
         # Loop through each level column
         for level_column in sr_level_columns:
             current_sr_level = row[level_column]
             if current_sr_level is not None:
                 # Check if signal count for this level has reached the threshold
-                # print('level_interactions_threshold_before: ', level_interactions_threshold)
-                # print('signals_count_before: ', signals_count)
                 if level_signal_count[level_column] < level_interactions_threshold:
-                    if signals_count <= signals_threshold:
+                    if signals_counter <= signals_threshold:
 
                         # **************************************************************************************************
                         # SHORTS LOGICS BEGIN HERE
@@ -154,28 +149,23 @@ def level_rejection_signals(
                                                 green_candle_low = potential_ob_candle['Low']
                                                 print(f'Current green candle low: {green_candle_low}')
 
-                                                if get_position_state() == '' or get_position_state() == 'closed':
-                                                    print(
-                                                        f"○ Green candle is below the SR level at index {subsequent_index}, "
-                                                        f"Time: {potential_ob_time}"
-                                                    )
-                                                    print('PLACE STOPMARKET.1A')
-                                                    signal = f'-100+{subsequent_index}'
+                                                print(
+                                                    f"○ Green candle is below the SR level at index {subsequent_index}, "
+                                                    f"Time: {potential_ob_time}"
+                                                )
+                                                print('PLACE STOPMARKET.1A')
+                                                signal = f'-100+{subsequent_index}'
 
-                                                    s_signal, n_index, t_price, s_time = signal_triggered_output(
-                                                        subsequent_index,
-                                                        potential_ob_time,
-                                                        green_candle_low,
-                                                        trade_type,
-                                                        side,
-                                                        signal
-                                                    )
-                                                    signals_count += 1
-                                                    print('signals_count: ', signals_count)
-
-                                                else:
-                                                    print('There is an open position. No new signals...'.upper())
-                                                    break
+                                                s_signal, n_index, t_price, s_time = signal_triggered_output(
+                                                    subsequent_index,
+                                                    potential_ob_time,
+                                                    green_candle_low,
+                                                    trade_type,
+                                                    side,
+                                                    signal
+                                                )
+                                                signals_counter += 1
+                                                print('signals_count: ', signals_counter)
 
                                             else:
                                                 print(
@@ -240,28 +230,25 @@ def level_rejection_signals(
                                             green_candle_low = potential_ob_candle['Low']
                                             # green_candle_found = True
                                             print(f'Current green candle low: {green_candle_low}')
-                                            if get_position_state() == '' or get_position_state() == 'closed':
-                                                print(
-                                                    f"⦿ It's below the level at index {subsequent_index}, "
-                                                    f"Time: {potential_ob_time}"
-                                                )
-                                                print('PLACE STOPMARKET.1B')
-                                                signal = f'-100+{subsequent_index}'
 
-                                                s_signal, n_index, t_price, s_time = signal_triggered_output(
-                                                    subsequent_index,
-                                                    potential_ob_time,
-                                                    green_candle_low,
-                                                    trade_type,
-                                                    side,
-                                                    signal
-                                                )
-                                                signals_count += 1
-                                                print('signals_count: ', signals_count)
+                                            print(
+                                                f"⦿ It's below the level at index {subsequent_index}, "
+                                                f"Time: {potential_ob_time}"
+                                            )
+                                            print('PLACE STOPMARKET.1B')
+                                            signal = f'-100+{subsequent_index}'
 
-                                            else:
-                                                print('There is an open position. No new signals...'.upper())
-                                                break
+                                            s_signal, n_index, t_price, s_time = signal_triggered_output(
+                                                subsequent_index,
+                                                potential_ob_time,
+                                                green_candle_low,
+                                                trade_type,
+                                                side,
+                                                signal
+                                            )
+                                            signals_counter += 1
+                                            print('signals_count: ', signals_counter)
+
                                         else:
                                             print(
                                                 f"Green candle found, but it's not below the level. "
@@ -325,28 +312,23 @@ def level_rejection_signals(
                                                 red_candle_high = potential_ob_candle['High']
                                                 print(f'Current red candle high: {red_candle_high}')
 
-                                                if get_position_state() == '' or get_position_state() == 'closed':
-                                                    print(
-                                                        f"Red candle is above the SR level at index {subsequent_index}, "
-                                                        f"Time: {potential_ob_time}"
-                                                    )
-                                                    print('PLACE STOPMARKET.2A')
-                                                    signal = f'100+{subsequent_index}'
+                                                print(
+                                                    f"Red candle is above the SR level at index {subsequent_index}, "
+                                                    f"Time: {potential_ob_time}"
+                                                )
+                                                print('PLACE STOPMARKET.2A')
+                                                signal = f'100+{subsequent_index}'
 
-                                                    s_signal, n_index, t_price, s_time = signal_triggered_output(
-                                                        subsequent_index,
-                                                        potential_ob_time,
-                                                        red_candle_high,
-                                                        trade_type,
-                                                        side,
-                                                        signal
-                                                    )
-                                                    signals_count += 1
-                                                    print('signals_count: ', signals_count)
-
-                                                else:
-                                                    print('There is an open position. No new signals...'.upper())
-                                                    break
+                                                s_signal, n_index, t_price, s_time = signal_triggered_output(
+                                                    subsequent_index,
+                                                    potential_ob_time,
+                                                    red_candle_high,
+                                                    trade_type,
+                                                    side,
+                                                    signal
+                                                )
+                                                signals_counter += 1
+                                                print('signals_count: ', signals_counter)
 
                                             else:
                                                 print(f"Red candle found, but it's not above the level. "
@@ -409,39 +391,35 @@ def level_rejection_signals(
                                             red_candle_high = potential_ob_candle['High']
                                             print(f'Current red candle high: {red_candle_high}')
 
-                                            if get_position_state() == '' or get_position_state() == 'closed':
-                                                print(
-                                                    f"⦿ It's above the level at index {subsequent_index}, "
-                                                    f"Time: {potential_ob_time}"
-                                                )
-                                                print('PLACE STOPMARKET.2B')
-                                                signal = f'100+{subsequent_index}'
+                                            print(
+                                                f"⦿ It's above the level at index {subsequent_index}, "
+                                                f"Time: {potential_ob_time}"
+                                            )
+                                            print('PLACE STOPMARKET.2B')
+                                            signal = f'100+{subsequent_index}'
 
-                                                s_signal, n_index, t_price, s_time = signal_triggered_output(
-                                                    subsequent_index,
-                                                    potential_ob_time,
-                                                    red_candle_high,
-                                                    trade_type,
-                                                    side,
-                                                    signal
-                                                )
-                                                signals_count += 1
-                                                print('signals_count: ', signals_count)
+                                            s_signal, n_index, t_price, s_time = signal_triggered_output(
+                                                subsequent_index,
+                                                potential_ob_time,
+                                                red_candle_high,
+                                                trade_type,
+                                                side,
+                                                signal
+                                            )
+                                            signals_counter += 1
+                                            print('signals_count: ', signals_counter)
 
-                                            else:
-                                                print('There is an open position. No new signals...'.upper())
-                                                break
                                         else:
                                             print(
                                                 f"Red candle found, but it's not above the level. "
                                                 f"Checking next candle...")
                     else:
-                        print(f'Signals_threshold{signals_threshold} reached')
+                        print(f'Signals_threshold: {signals_threshold} reached')
                 else:
                     print('-------------------------------------------------------------------------------')
                     print(f'Level interactions number ({level_interactions_threshold}) reached '
                           f'for level {current_sr_level}')
-        print('signals_count_in_the_end: ', signals_count)
+
     return (
             level_signal_count,
             s_signal,
@@ -449,5 +427,6 @@ def level_rejection_signals(
             t_price,
             levels_to_remove,
             candle_counter,
-            s_time
+            s_time,
+            signals_counter
     )

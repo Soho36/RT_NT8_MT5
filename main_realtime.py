@@ -97,7 +97,8 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         stop_market_price,      # stop-market order price
         levels_to_remove,
         candle_counter,
-        s_time
+        s_time,
+        signals_counter
     ) = level_rejection_signals(
         output_df_with_levels,
         sr_levels,
