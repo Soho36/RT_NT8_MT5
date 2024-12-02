@@ -1,5 +1,5 @@
 from data_handling_realtime import (get_dataframe_from_file, get_levels_from_file, leave_only_last_line,
-                                    remove_expired_levels)
+                                    remove_expired_levels, get_last_order_time_from_file)
 from price_levels_manual_realtime import process_levels
 from signals_with_ob_short_long_realtime import level_rejection_signals
 from orders_sender import last_candle_ohlc, send_buy_sell_orders
@@ -18,7 +18,7 @@ stop_loss_offset = 1                # Is added to SL for Shorts and subtracted f
 
 level_interactions_threshold = 3    # Times
 max_time_waiting_for_entry = 5      # Minutes
-# reverse_trades = False
+
 level_lifetime_minutes = 420         # Minutes
 
 clear_csv_before_start = True
@@ -96,7 +96,8 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         n_index,                # index
         stop_market_price,      # stop-market order price
         levels_to_remove,
-        candle_counter
+        candle_counter,
+        s_time
     ) = level_rejection_signals(
         output_df_with_levels,
         sr_levels,
@@ -120,7 +121,7 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         output_df_with_levels
     )
 
-    # TRANSMITTER FUNCTION
+    last_order_timestamp = get_last_order_time_from_file()
 
     # SEND ORDERS
     (
@@ -135,11 +136,9 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         s_s_flag,
         last_candle_high,
         last_candle_low,
-        last_candle_close,
-        ticker,
         stop_loss_offset,
-        risk_reward,
-        # reverse_trades
+        s_time,
+        last_order_timestamp
     )
 
     l_signal = s_signal

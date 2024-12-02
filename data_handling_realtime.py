@@ -26,6 +26,9 @@ nt8_buy_sell_signals_for_path = (
 levels_path = (
     f'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\hardcoded_sr_levels.csv'
 )
+
+list_of_orders_path = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\list_of_orders.csv'
+
 position_state_path = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\position_state.txt'
 
 current_order_direction_path = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\current_order_direction.txt'
@@ -85,8 +88,8 @@ def get_levels_from_file():
                 # Line with only a level; add current timestamp
                 current_time = datetime.now()
 
-                if current_time.second > 0:
-                    current_time -= timedelta(hours=1, minutes=59)
+                # if current_time.second > 0:
+                current_time -= timedelta(hours=2)
 
                 current_time = current_time.replace(second=0, microsecond=0)
 
@@ -149,3 +152,16 @@ def save_order_parameters_to_file(line_order_parameters):   # Called from orders
         print('NEW ORDER IS SUCCESSFULLY SAVED TO FILE')
 
 
+# Create orders list file to track orders
+def save_list_of_orders_to_file(line_order_parameters_to_order_list):
+    with open(list_of_orders_path, 'w', encoding='utf-8') as file:
+        file.writelines(line_order_parameters_to_order_list)
+
+
+def get_last_order_time_from_file():
+    with open(list_of_orders_path, 'r', encoding='utf-8') as file:
+        last_order_timestamp = pd.to_datetime(file.read())
+        if pd.isna(last_order_timestamp):
+            last_order_timestamp = pd.to_datetime('2024-01-01 00:00:00')  # Default value while the file is empty
+
+        return last_order_timestamp
