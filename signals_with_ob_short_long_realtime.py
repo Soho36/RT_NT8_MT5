@@ -12,14 +12,14 @@ def level_rejection_signals(
         level_interactions_threshold,
         max_time_waiting_for_entry
 ):
-    signals_threshold = 5
+    signals_threshold = 10
     n_index = None
     s_signal = None
     t_price = None
     s_time = None
     candle_counter = 0
     signals_counter = 0
-    levels_to_remove = []  # List to queue levels for deletion
+    interacted_levels = []  # List to queue levels for deletion
 
     # Create a dictionary to track signal count per level
     level_signal_count = {i: 0 for i in range(1, len(sr_levels) + 1)}
@@ -61,7 +61,8 @@ def level_rejection_signals(
             tt_price,
             t_type,
             t_side,
-            ss_signal
+            ss_signal,
+            sig_counter
     ):
 
         print(
@@ -70,6 +71,7 @@ def level_rejection_signals(
             f"Time: {sig_time}, "
             f"Stop-market price: {tt_price}\n"
             f"+ s_signal: {ss_signal}\n"
+            f"signals count: {sig_counter}\n"
             "++++++++++++++++++++++++++"
         )
         print('-----------------------------------------------------------------------------------------------------')
@@ -104,6 +106,7 @@ def level_rejection_signals(
                                     # Over-Under condition met for short
                                     level_signal_count[level_column] += 1
                                     level_interaction_signal_time = current_candle_time
+                                    interacted_levels.append(current_sr_level)
                                     print('-------------------------------------------------------------------------------')
                                     print(f"{index} ▲▼ Short: 'Over-under' condition met, "
                                           f"Time: {current_candle_time}, "
@@ -156,16 +159,17 @@ def level_rejection_signals(
                                                 print('PLACE STOPMARKET.1A')
                                                 signal = f'-100+{subsequent_index}'
 
+                                                signals_counter += 1
+
                                                 s_signal, n_index, t_price, s_time = signal_triggered_output(
                                                     subsequent_index,
                                                     potential_ob_time,
                                                     green_candle_low,
                                                     trade_type,
                                                     side,
-                                                    signal
+                                                    signal,
+                                                    signals_counter
                                                 )
-                                                signals_counter += 1
-                                                print('signals_count: ', signals_counter)
 
                                             else:
                                                 print(
@@ -179,6 +183,7 @@ def level_rejection_signals(
                                 # Over condition met for short
                                 level_signal_count[level_column] += 1
                                 level_interaction_signal_time = current_candle_time
+                                interacted_levels.append(current_sr_level)
                                 print('-------------------------------------------------------------------------------')
                                 print(f"{index} ▼ Short: 'Under' condition met, "
                                       f"Time: {current_candle_time}, "
@@ -237,6 +242,7 @@ def level_rejection_signals(
                                             )
                                             print('PLACE STOPMARKET.1B')
                                             signal = f'-100+{subsequent_index}'
+                                            signals_counter += 1
 
                                             s_signal, n_index, t_price, s_time = signal_triggered_output(
                                                 subsequent_index,
@@ -244,10 +250,9 @@ def level_rejection_signals(
                                                 green_candle_low,
                                                 trade_type,
                                                 side,
-                                                signal
+                                                signal,
+                                                signals_counter
                                             )
-                                            signals_counter += 1
-                                            print('signals_count: ', signals_counter)
 
                                         else:
                                             print(
@@ -264,6 +269,7 @@ def level_rejection_signals(
                                     # Over-Under condition met for long
                                     level_signal_count[level_column] += 1
                                     level_interaction_signal_time = current_candle_time
+                                    interacted_levels.append(current_sr_level)
                                     print('-------------------------------------------------------------------------------')
                                     print(f"{index} ▼▲ Long: 'Under-over' condition met, "
                                           f"Time: {current_candle_time}, "
@@ -318,6 +324,7 @@ def level_rejection_signals(
                                                 )
                                                 print('PLACE STOPMARKET.2A')
                                                 signal = f'100+{subsequent_index}'
+                                                signals_counter += 1
 
                                                 s_signal, n_index, t_price, s_time = signal_triggered_output(
                                                     subsequent_index,
@@ -325,10 +332,9 @@ def level_rejection_signals(
                                                     red_candle_high,
                                                     trade_type,
                                                     side,
-                                                    signal
+                                                    signal,
+                                                    signals_counter
                                                 )
-                                                signals_counter += 1
-                                                print('signals_count: ', signals_counter)
 
                                             else:
                                                 print(f"Red candle found, but it's not above the level. "
@@ -341,6 +347,7 @@ def level_rejection_signals(
                                 # Under condition met for long
                                 level_signal_count[level_column] += 1
                                 level_interaction_signal_time = current_candle_time
+                                interacted_levels.append(current_sr_level)
                                 print('-------------------------------------------------------------------------------')
                                 print(f"{index} ▲ Long: 'Over' condition met, "
                                       f"Time: {current_candle_time}, "
@@ -397,6 +404,7 @@ def level_rejection_signals(
                                             )
                                             print('PLACE STOPMARKET.2B')
                                             signal = f'100+{subsequent_index}'
+                                            signals_counter += 1
 
                                             s_signal, n_index, t_price, s_time = signal_triggered_output(
                                                 subsequent_index,
@@ -404,10 +412,9 @@ def level_rejection_signals(
                                                 red_candle_high,
                                                 trade_type,
                                                 side,
-                                                signal
+                                                signal,
+                                                signals_counter
                                             )
-                                            signals_counter += 1
-                                            print('signals_count: ', signals_counter)
 
                                         else:
                                             print(
@@ -425,7 +432,7 @@ def level_rejection_signals(
             s_signal,
             n_index,
             t_price,
-            levels_to_remove,
+            interacted_levels,
             candle_counter,
             s_time,
             signals_counter

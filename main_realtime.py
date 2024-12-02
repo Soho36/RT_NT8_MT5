@@ -9,17 +9,17 @@ from watchdog.events import FileSystemEventHandler
 import time
 import os
 
-# ************************************** ORDER PARAMETERS *******************************************************
+# ******************************************* ORDER PARAMETERS *******************************************************
 volume_value = 1                    # 1000 MAX for stocks. Used only in AU3 (MT5 assigns volume itself)
 risk_reward = 1                     # Risk/Reward ratio (Not used with multiple TP-s)
 stop_loss_offset = 1                # Is added to SL for Shorts and subtracted for Longs (can be equal to spread)
 
 # hardcoded_sr_levels = [('2024-11-02 16:19:00', 69245.00), ('2024-11-02 16:19:00', 69167.00)]  # Example support levels
 
-level_interactions_threshold = 5    # Times
-max_time_waiting_for_entry = 10      # Minutes
+level_interactions_threshold = 3    # Times
+max_time_waiting_for_entry = 10     # Minutes
 
-level_lifetime_minutes = 420         # Minutes
+level_lifetime_minutes = 10   # Minutes
 
 clear_csv_before_start = True
 # **************************************************************************************************************
@@ -75,7 +75,7 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
 
     # GET LEVELS FROM FILE
     hardcoded_sr_levels = get_levels_from_file()
-    print('hardcoded_sr_levels from file: \n', hardcoded_sr_levels)
+    # print('hardcoded_sr_levels from file: \n', hardcoded_sr_levels)
 
     # PRICE LEVELS
     (
@@ -95,7 +95,7 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         s_signal,               # signal 100 or -100
         n_index,                # index
         stop_market_price,      # stop-market order price
-        levels_to_remove,
+        interacted_levels,
         candle_counter,
         s_time,
         signals_counter
@@ -106,11 +106,11 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         max_time_waiting_for_entry
     )
 
-    print(f'Candles processed since start: {candle_counter}')
+    print(f'\nCandles processed since start: {candle_counter}')
 
     # Remove the level which has been hit threshold
 
-    remove_expired_levels(level_lifetime_minutes, dataframe_from_log)
+    remove_expired_levels(level_lifetime_minutes, dataframe_from_log, interacted_levels)
 
     # LAST CANDLE OHLC (current OHLC)
     (

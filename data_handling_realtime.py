@@ -109,21 +109,25 @@ def get_levels_from_file():
 #   Remove level which has reached time threshold from file
 
 
-def remove_expired_levels(level_lifetime_minutes, dataframe_from_log):
-    # output_df_with_levels = output_df_with_levels.set_index(['Datetime'], inplace=True)
+def remove_expired_levels(level_lifetime_minutes, dataframe_from_log, interacted_levels):
+
     current_time = dataframe_from_log.index[-1]  # Timestamp of the last line of dataframe
     updated_levels = []
-
+    print('\nLevels management:')
+    print('interacted_levels', interacted_levels)
+    print(f'level_lifetime_minutes: {level_lifetime_minutes}\n')
     with open(levels_path, 'r', encoding='utf-8') as file:
         for line in file:
             timestamp_str, level = line.strip().split(',')
             timestamp = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
-
+            level = level.strip()
             # Calculate the time difference
             time_diff = (current_time - timestamp).total_seconds() / 60  # Convert to minutes
-
-            # Keep the level if it is still within its lifetime
-            if time_diff < level_lifetime_minutes:
+            print(time_diff)
+            if float(level) not in interacted_levels:
+                if time_diff < level_lifetime_minutes:
+                    updated_levels.append(line)
+            elif time_diff < level_lifetime_minutes:
                 updated_levels.append(line)
             else:
                 print(f"Removing expired level: {timestamp_str}, {level.strip()}")

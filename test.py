@@ -1,9 +1,13 @@
-threshold = 5
-count = 0
+levels = [34, 45, 56, 43, 67, 83]
 
-for i in range(11):
-    if count <= threshold:
-        print(count)
-        count += 1
+dd = 56
+# for level in levels:
+#     if dd not in levels:
+#         print(False)
+#     else:
+#         print(True)
 
-# print(count)
+if dd not in levels:
+    print(False)
+else:
+    print(True)

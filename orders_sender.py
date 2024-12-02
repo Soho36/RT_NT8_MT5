@@ -39,11 +39,12 @@ def send_buy_sell_orders(
 
     if not pd.isna(current_order_timestamp):
         time_difference_current_time_order = ((current_time - current_order_timestamp).total_seconds() / 60)
-
+    print()
+    print('Order Sender: ')
     print(f'Last signal: {last_signal}'.upper())
     print(f'Current signal: {current_signal}'.upper())
     print(f'Last order timestamp: {last_order_timestamp}')
-    print(f'Current order timestamp: {current_order_timestamp}')
+    print(f'Recent order timestamp: {current_order_timestamp}')
     print(f'Current time: {current_time}')
     print(f'Time difference: {time_difference_current_time_order}')
 
