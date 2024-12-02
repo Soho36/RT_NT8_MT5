@@ -105,7 +105,7 @@ def send_buy_sell_orders(
                 winsound.PlaySound('Windows Critical Stop.wav', winsound.SND_FILENAME)
                 print('Longs: Old signal. Rejected')
     else:
-        print('Longs: No new orders so far')
+        print('Longs: No new orders')
 
     # +------------------------------------------------------------------+
     # SELL ORDER
@@ -165,6 +165,6 @@ def send_buy_sell_orders(
                 winsound.PlaySound('Windows Critical Stop.wav', winsound.SND_FILENAME)
                 print('Shorts: Old signal. Rejected')
     else:
-        print('Shorts: No new orders so far')
+        print('Shorts: No new orders')
 
     return buy_signal, sell_signal

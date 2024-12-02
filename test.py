@@ -1,7 +1,9 @@
-for i in range(10):
-    if i == 2:
-        print(i)
-    if i == 6:
-        continue
+threshold = 5
+count = 0
 
-    print(i)
+for i in range(11):
+    if count <= threshold:
+        print(count)
+        count += 1
+
+# print(count)
