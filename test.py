@@ -1,13 +1,8 @@
-levels = [34, 45, 56, 43, 67, 83]
+level_interaction_signal_time = '2024-12-02 23:11:00'
+current_level = 21212.75
+interacted_levels = []
 
-dd = 56
-# for level in levels:
-#     if dd not in levels:
-#         print(False)
-#     else:
-#         print(True)
+interacted_levels.append((level_interaction_signal_time, current_level))
 
-if dd not in levels:
-    print(False)
-else:
-    print(True)
+print(interacted_levels)
+

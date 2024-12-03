@@ -115,22 +115,30 @@ def remove_expired_levels(level_lifetime_minutes, dataframe_from_log, interacted
     updated_levels = []
     print('\nLevels management:')
     print('interacted_levels', interacted_levels)
-    print(f'level_lifetime_minutes: {level_lifetime_minutes}\n')
+    print(f'level_lifetime_minutes: {level_lifetime_minutes} minutes\n')
     with open(levels_path, 'r', encoding='utf-8') as file:
         for line in file:
-            timestamp_str, level = line.strip().split(',')
-            timestamp = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
-            level = level.strip()
-            # Calculate the time difference
-            time_diff = (current_time - timestamp).total_seconds() / 60  # Convert to minutes
-            print(time_diff)
-            if float(level) not in interacted_levels:
-                if time_diff < level_lifetime_minutes:
-                    updated_levels.append(line)
-            elif time_diff < level_lifetime_minutes:
+            timestamp_str, file_level = line.strip().split(',')  # Get timestamp and level from file
+            file_level = float(file_level.strip())
+
+            # Flag to check if the level is still valid
+            level_still_valid = False
+
+            for interaction_time, level in interacted_levels:
+                if level == file_level:  # Match the file level with interacted level
+                    # Calculate the time difference
+                    time_diff = (current_time - pd.to_datetime(interaction_time)).total_seconds() / 60  # Convert to minutes
+                    print(f"Level {level}: Time difference {time_diff:.2f} minutes")
+
+                    if time_diff < level_lifetime_minutes:
+                        level_still_valid = True  # Mark as valid
+                        break  # No need to check other interactions for the same level
+
+                    # Add the level back if it’s still valid or hasn’t been interacted with
+            if level_still_valid or all(file_level != lvl for _, lvl in interacted_levels):
                 updated_levels.append(line)
             else:
-                print(f"Removing expired level: {timestamp_str}, {level.strip()}")
+                print(f"Removing expired level: {timestamp_str}, {file_level}")
 
     # Write the remaining levels back to the file
     with open(levels_path, 'w', encoding='utf-8') as file:

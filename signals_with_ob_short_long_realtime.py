@@ -106,7 +106,7 @@ def level_rejection_signals(
                                     # Over-Under condition met for short
                                     level_signal_count[level_column] += 1
                                     level_interaction_signal_time = current_candle_time
-                                    interacted_levels.append(current_sr_level)
+                                    interacted_levels.append((level_interaction_signal_time, current_sr_level))
                                     print('-------------------------------------------------------------------------------')
                                     print(f"{index} ▲▼ Short: 'Over-under' condition met, "
                                           f"Time: {current_candle_time}, "
@@ -134,7 +134,6 @@ def level_rejection_signals(
                                                 max_time_waiting_for_entry,
                                                 subsequent_index,
                                                 potential_ob_time,
-
                                                 level_interaction_signal_time,
                                                 time_diff,
                                                 trace
@@ -183,7 +182,7 @@ def level_rejection_signals(
                                 # Over condition met for short
                                 level_signal_count[level_column] += 1
                                 level_interaction_signal_time = current_candle_time
-                                interacted_levels.append(current_sr_level)
+                                interacted_levels.append((level_interaction_signal_time, current_sr_level))
                                 print('-------------------------------------------------------------------------------')
                                 print(f"{index} ▼ Short: 'Under' condition met, "
                                       f"Time: {current_candle_time}, "
@@ -269,7 +268,7 @@ def level_rejection_signals(
                                     # Over-Under condition met for long
                                     level_signal_count[level_column] += 1
                                     level_interaction_signal_time = current_candle_time
-                                    interacted_levels.append(current_sr_level)
+                                    interacted_levels.append((level_interaction_signal_time, current_sr_level))
                                     print('-------------------------------------------------------------------------------')
                                     print(f"{index} ▼▲ Long: 'Under-over' condition met, "
                                           f"Time: {current_candle_time}, "
@@ -347,7 +346,7 @@ def level_rejection_signals(
                                 # Under condition met for long
                                 level_signal_count[level_column] += 1
                                 level_interaction_signal_time = current_candle_time
-                                interacted_levels.append(current_sr_level)
+                                interacted_levels.append((level_interaction_signal_time, current_sr_level))
                                 print('-------------------------------------------------------------------------------')
                                 print(f"{index} ▲ Long: 'Over' condition met, "
                                       f"Time: {current_candle_time}, "
