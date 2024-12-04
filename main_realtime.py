@@ -1,3 +1,6 @@
+import time
+import os
+import pandas as pd
 from data_handling_realtime import (get_dataframe_from_file, get_levels_from_file, leave_only_last_line,
                                     remove_expired_levels, get_last_order_time_from_file)
 from price_levels_manual_realtime import process_levels
@@ -6,8 +9,9 @@ from orders_sender import last_candle_ohlc, send_buy_sell_orders
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-import time
-import os
+# pd.set_option('display.max_rows', 100)  # Increase the number of rows shown
+pd.set_option('display.max_columns', 9)  # Increase the number of columns shown
+pd.set_option('display.width', 700)  # Increase the terminal width for better visibility
 
 # ******************************************* ORDER PARAMETERS *******************************************************
 volume_value = 1                    # 1000 MAX for stocks. Used only in AU3 (MT5 assigns volume itself)
@@ -17,11 +21,11 @@ stop_loss_offset = 1                # Is added to SL for Shorts and subtracted f
 # hardcoded_sr_levels = [('2024-11-02 16:19:00', 69245.00), ('2024-11-02 16:19:00', 69167.00)]  # Example support levels
 
 level_interactions_threshold = 3    # Times
-max_time_waiting_for_entry = 10     # Minutes
+max_time_waiting_for_entry = 30     # Minutes
 
-level_lifetime_minutes = 10   # Minutes
+level_lifetime_minutes = 30   # Minutes after interaction
 
-clear_csv_before_start = True
+clear_csv_before_start = False
 # **************************************************************************************************************
 
 # LIIKURI PATHS

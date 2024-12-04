@@ -65,12 +65,9 @@ def send_buy_sell_orders(
 
                         # ORDER PARAMETERS
                         stop_loss_price = round(last_candle_low - stop_loss_offset, 3)
-                        take_profit_price = round((((last_candle_high - stop_loss_price) * 1)  # R/R hardcoded
-                                                   + last_candle_high) + stop_loss_offset, 3)
-                        take_profit_price_2 = round((((last_candle_high - stop_loss_price) * 2)  # R/R hardcoded
-                                                     + last_candle_high) + stop_loss_offset, 3)
-                        take_profit_price_3 = round((((last_candle_high - stop_loss_price) * 5)  # R/R hardcoded
-                                                     + last_candle_high) + stop_loss_offset, 3)
+                        take_profit_price = round(((last_candle_high - stop_loss_price) * 1), 3)  # R/R hardcoded
+                        take_profit_price_2 = round(((last_candle_high - stop_loss_price) * 2), 3)  # R/R hardcoded
+                        take_profit_price_3 = round(((last_candle_high - stop_loss_price) * 5), 3)  # R/R hardcoded
 
                         line_order_parameters_nt8 = \
                             f'Buy, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}, {take_profit_price_3}'
@@ -129,12 +126,9 @@ def send_buy_sell_orders(
 
                         # Order parameters
                         stop_loss_price = round(last_candle_high + stop_loss_offset, 3)
-                        take_profit_price = round((last_candle_low - ((stop_loss_price - last_candle_low) * 1))     # R/R hardcoded
-                                                  + stop_loss_offset, 3)
-                        take_profit_price_2 = round((last_candle_low - ((stop_loss_price - last_candle_low) * 2))   # R/R hardcoded
-                                                    + stop_loss_offset, 3)
-                        take_profit_price_3 = round((last_candle_low - ((stop_loss_price - last_candle_low) * 5))  # R/R hardcoded
-                                                    + stop_loss_offset, 3)
+                        take_profit_price = round((last_candle_low - ((stop_loss_price - last_candle_low) * 1)), 3)     # R/R hardcoded
+                        take_profit_price_2 = round((last_candle_low - ((stop_loss_price - last_candle_low) * 2)), 3)   # R/R hardcoded
+                        take_profit_price_3 = round((last_candle_low - ((stop_loss_price - last_candle_low) * 5)), 3)   # R/R hardcoded
 
                         line_order_parameters_nt8 = \
                             f'Sell, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}, {take_profit_price_3}'
