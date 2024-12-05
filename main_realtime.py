@@ -25,7 +25,7 @@ max_time_waiting_for_entry = 30     # Minutes
 
 level_lifetime_minutes = 30   # Minutes after interaction
 
-clear_csv_before_start = False
+clear_csv_before_start = True
 # **************************************************************************************************************
 
 # LIIKURI PATHS
@@ -74,11 +74,12 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
     print('\n********************************************************************************************************')
 
     # GET DATAFRAME FROM LOG
-    dataframe_from_log, first_date2 = get_dataframe_from_file(max_time_waiting_for_entry)
+    dataframe_from_log, last_datetime_of_df = get_dataframe_from_file(max_time_waiting_for_entry)
     # print('\nget_dataframe_from_file: \n', dataframe_from_log[-10:])
+    # print('last_date!!!!!', last_datetime_of_df)
 
     # GET LEVELS FROM FILE
-    hardcoded_sr_levels = get_levels_from_file()
+    hardcoded_sr_levels = get_levels_from_file(last_datetime_of_df)
     # print('hardcoded_sr_levels from file: \n', hardcoded_sr_levels)
 
     # PRICE LEVELS

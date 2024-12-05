@@ -40,7 +40,9 @@ def leave_only_last_line():     # Clear file before starting the script
         # Check if there's at least one line to keep
         if lines:
             with open(mt5_logging_file_path, 'w', encoding='utf-16') as file:
-                file.write(lines[-1])  # Write only the first line back to the file
+                file.write(lines[-1])  # Write only last several lines back to file
+        else:
+            print('Reading OHLC. File is empty...')
 
 
 def get_dataframe_from_file(max_time_waiting_for_entry):
@@ -49,9 +51,7 @@ def get_dataframe_from_file(max_time_waiting_for_entry):
         mt5_logging_file_path,
         sep=';',
         encoding='utf-16',
-        engine='python',
-        # skiprows=lambda x: x < (sum(1 for _ in open(mt5_logging_file_path, encoding='utf-16')) - max_time_waiting_for_entry - 1
-        # )
+        engine='python'
     )
     new_column_names = ['Ticker', 'Timeframe', 'Date', 'Time', 'Open', 'High', 'Low', 'Close', 'Volume']
     log_df.columns = new_column_names
@@ -59,20 +59,12 @@ def get_dataframe_from_file(max_time_waiting_for_entry):
     log_df.set_index('Datetime', inplace=True)
     dataframe_from_log = log_df.loc[:, ['Ticker', 'Date', 'Time', 'Open', 'High', 'Low', 'Close']]
     datetime_index = log_df.index
-    first_date = str(datetime_index[0])     # Get datetime of the first row of dataframe to pass along with levels
+    last_date = str(datetime_index[-1])     # Get datetime of the first row of dataframe to pass along with levels
 
-    return dataframe_from_log, first_date
+    return dataframe_from_log, last_date
 
 
-# def get_levels_from_file():
-#     with open(levels_path, 'r', encoding='utf-8') as file:
-#         levels = [
-#             (line.split(',')[0].strip(), float(line.split(',')[1].strip()))
-#             for line in file
-#         ]
-#     return levels
-
-def get_levels_from_file():
+def get_levels_from_file(last_datetime_of_df):
     updated_lines = []
     levels = []
 
@@ -84,16 +76,19 @@ def get_levels_from_file():
                 # Properly formatted line
                 timestamp = parts[0].strip()
                 level = float(parts[1].strip())
+            # else:
+            #     # Line with only a level; add current timestamp
+            #     current_time = datetime.now()
+            #
+            #     # if current_time.second > 0:
+            #     current_time -= timedelta(hours=2)
+            #
+            #     current_time = current_time.replace(second=0, microsecond=0)
+            #
+            #     timestamp = current_time.strftime('%Y-%m-%d %H:%M:%S')
+            #     level = float(parts[0].strip())
             else:
-                # Line with only a level; add current timestamp
-                current_time = datetime.now()
-
-                # if current_time.second > 0:
-                current_time -= timedelta(hours=2)
-
-                current_time = current_time.replace(second=0, microsecond=0)
-
-                timestamp = current_time.strftime('%Y-%m-%d %H:%M:%S')
+                timestamp = last_datetime_of_df
                 level = float(parts[0].strip())
 
             # Add the formatted line to the update list
@@ -106,9 +101,8 @@ def get_levels_from_file():
 
     return levels
 
+
 #   Remove level which has reached time threshold from file
-
-
 def remove_expired_levels(level_lifetime_minutes, dataframe_from_log, interacted_levels):
 
     current_time = dataframe_from_log.index[-1]  # Timestamp of the last line of dataframe

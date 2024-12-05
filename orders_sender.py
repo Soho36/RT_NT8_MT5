@@ -136,6 +136,7 @@ def send_buy_sell_orders(
                         # Stop Loss Price
                         stop_loss_price = round(last_candle_high + stop_loss_offset, 3)
                         risk = stop_loss_price - entry_price
+
                         # Take Profit Prices (based on R:R ratios)
                         take_profit_price = round(entry_price - 1 * risk, 3)
                         take_profit_price_2 = round(entry_price - 2 * risk, 3)
