@@ -29,9 +29,8 @@ clear_csv_before_start = True
 # **************************************************************************************************************
 
 # LIIKURI PATHS
-path_ohlc_check_for_change = \
-    'C:\\Users\\Liikurserv\\AppData\\Roaming\\MetaQuotes\\Terminal\\09FF355D73768D9CE6BDD4EE575EAB09\\MQL5\\Files\\'
-file = 'OHLCVData_828.csv'
+path_ohlc_check_for_change = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\'
+file = 'OHLCVData_1.csv'
 
 # SILLAMAE PATHS
 # path =

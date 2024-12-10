@@ -39,6 +39,7 @@ namespace NinjaTrader.NinjaScript.Strategies
             double high = High[0];
             double low = Low[0];
             double close = Close[0];
+			double volume = Volume[0];
 
             // Get current date and time
             DateTime now = Time[0];
@@ -54,7 +55,8 @@ namespace NinjaTrader.NinjaScript.Strategies
                 open.ToString("F2"),
                 high.ToString("F2"),
                 low.ToString("F2"),
-                close.ToString("F2"));
+                close.ToString("F2"),
+				volume.ToString("F2"));
 
             Print("New line saved to file: " + dataLine);
             File.AppendAllText(filePath, dataLine + Environment.NewLine);
