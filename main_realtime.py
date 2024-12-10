@@ -19,7 +19,7 @@ risk_reward = 1                     # Risk/Reward ratio (Not used with multiple 
 stop_loss_offset = 1                # Is added to SL for Shorts and subtracted for Longs (can be equal to spread)
 
 # hardcoded_sr_levels = [('2024-11-02 16:19:00', 69245.00), ('2024-11-02 16:19:00', 69167.00)]  # Example support levels
-
+ob_candle_size = 25
 level_interactions_threshold = 3    # Times
 max_time_waiting_for_entry = 30     # Minutes
 
@@ -107,7 +107,8 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
         output_df_with_levels,
         sr_levels,
         level_interactions_threshold,
-        max_time_waiting_for_entry
+        max_time_waiting_for_entry,
+        ob_candle_size
     )
 
     print(f'\nCandles processed since start: {candle_counter}')

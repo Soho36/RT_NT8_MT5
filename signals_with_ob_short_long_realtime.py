@@ -10,7 +10,8 @@ def level_rejection_signals(
         output_df_with_levels,
         sr_levels,
         level_interactions_threshold,
-        max_time_waiting_for_entry
+        max_time_waiting_for_entry,
+        ob_candle_size
 ):
     signals_threshold = 10
     n_index = None
@@ -147,7 +148,7 @@ def level_rejection_signals(
                                         # Check for green candle and that it’s below SR level
                                         if potential_ob_candle['Close'] > potential_ob_candle['Open']:
                                             if potential_ob_candle['Close'] < current_sr_level:
-
+                                                green_candle_high = potential_ob_candle['High']
                                                 green_candle_low = potential_ob_candle['Low']
                                                 print(f'Current green candle low: {green_candle_low}')
 
@@ -155,21 +156,23 @@ def level_rejection_signals(
                                                     f"○ Green candle closed below the SR level at index {subsequent_index}, "
                                                     f"Time: {potential_ob_time}"
                                                 )
-                                                print('SEND STOPMARKET.1A')
-                                                signal = f'-100+{subsequent_index}'
+                                                if green_candle_high - green_candle_low <= ob_candle_size:
+                                                    print('SEND STOPMARKET.1A')
+                                                    signal = f'-100+{subsequent_index}'
 
-                                                signals_counter += 1
+                                                    signals_counter += 1
 
-                                                s_signal, n_index, t_price, s_time = signal_triggered_output(
-                                                    subsequent_index,
-                                                    potential_ob_time,
-                                                    green_candle_low,
-                                                    trade_type,
-                                                    side,
-                                                    signal,
-                                                    signals_counter
-                                                )
-
+                                                    s_signal, n_index, t_price, s_time = signal_triggered_output(
+                                                        subsequent_index,
+                                                        potential_ob_time,
+                                                        green_candle_low,
+                                                        trade_type,
+                                                        side,
+                                                        signal,
+                                                        signals_counter
+                                                    )
+                                                else:
+                                                    print(f"Green candle is bigger than threshold ({ob_candle_size})")
                                             else:
                                                 print(
                                                     f"Green candle found, but it closed not below the level. "
@@ -231,28 +234,30 @@ def level_rejection_signals(
 
                                         # Check if the green candle is below the SR level
                                         if potential_ob_candle['Close'] < current_sr_level:
+                                            green_candle_high = potential_ob_candle['High']
                                             green_candle_low = potential_ob_candle['Low']
-                                            # green_candle_found = True
                                             print(f'Current green candle low: {green_candle_low}')
 
                                             print(
                                                 f"⦿ It closed below the level at index {subsequent_index}, "
                                                 f"Time: {potential_ob_time}"
                                             )
-                                            print('SEND STOPMARKET.1B')
-                                            signal = f'-100+{subsequent_index}'
-                                            signals_counter += 1
+                                            if green_candle_high - green_candle_low <= ob_candle_size:
+                                                print('SEND STOPMARKET.1B')
+                                                signal = f'-100+{subsequent_index}'
+                                                signals_counter += 1
 
-                                            s_signal, n_index, t_price, s_time = signal_triggered_output(
-                                                subsequent_index,
-                                                potential_ob_time,
-                                                green_candle_low,
-                                                trade_type,
-                                                side,
-                                                signal,
-                                                signals_counter
-                                            )
-
+                                                s_signal, n_index, t_price, s_time = signal_triggered_output(
+                                                    subsequent_index,
+                                                    potential_ob_time,
+                                                    green_candle_low,
+                                                    trade_type,
+                                                    side,
+                                                    signal,
+                                                    signals_counter
+                                                )
+                                            else:
+                                                print(f"Green candle is bigger than threshold ({ob_candle_size})")
                                         else:
                                             print(
                                                 f"Green candle found, but it closed not below the level. "
@@ -315,26 +320,29 @@ def level_rejection_signals(
                                             # Check if the red candle is below the SR level
                                             if potential_ob_candle['Close'] > current_sr_level:
                                                 red_candle_high = potential_ob_candle['High']
+                                                red_candle_low = potential_ob_candle['Low']
                                                 print(f'Current red candle high: {red_candle_high}')
 
                                                 print(
                                                     f"Red candle closed above the SR level at index {subsequent_index}, "
                                                     f"Time: {potential_ob_time}"
                                                 )
-                                                print('SEND STOPMARKET.2A')
-                                                signal = f'100+{subsequent_index}'
-                                                signals_counter += 1
+                                                if red_candle_high - red_candle_low <= ob_candle_size:
+                                                    print('SEND STOPMARKET.2A')
+                                                    signal = f'100+{subsequent_index}'
+                                                    signals_counter += 1
 
-                                                s_signal, n_index, t_price, s_time = signal_triggered_output(
-                                                    subsequent_index,
-                                                    potential_ob_time,
-                                                    red_candle_high,
-                                                    trade_type,
-                                                    side,
-                                                    signal,
-                                                    signals_counter
-                                                )
-
+                                                    s_signal, n_index, t_price, s_time = signal_triggered_output(
+                                                        subsequent_index,
+                                                        potential_ob_time,
+                                                        red_candle_high,
+                                                        trade_type,
+                                                        side,
+                                                        signal,
+                                                        signals_counter
+                                                    )
+                                                else:
+                                                    print(f"Red candle is bigger than threshold ({ob_candle_size})")
                                             else:
                                                 print(f"Red candle found, but it closed not above the level. "
                                                       f"Checking next candle...")
@@ -395,26 +403,29 @@ def level_rejection_signals(
                                         if potential_ob_candle['Close'] > current_sr_level:
                                             # Candle must be above the level
                                             red_candle_high = potential_ob_candle['High']
+                                            red_candle_low = potential_ob_candle['Low']
                                             print(f'Current red candle high: {red_candle_high}')
 
                                             print(
                                                 f"⦿ It closed above the level at index {subsequent_index}, "
                                                 f"Time: {potential_ob_time}"
                                             )
-                                            print('SEND STOPMARKET.2B')
-                                            signal = f'100+{subsequent_index}'
-                                            signals_counter += 1
+                                            if red_candle_high - red_candle_low <= ob_candle_size:
+                                                print('SEND STOPMARKET.2B')
+                                                signal = f'100+{subsequent_index}'
+                                                signals_counter += 1
 
-                                            s_signal, n_index, t_price, s_time = signal_triggered_output(
-                                                subsequent_index,
-                                                potential_ob_time,
-                                                red_candle_high,
-                                                trade_type,
-                                                side,
-                                                signal,
-                                                signals_counter
-                                            )
-
+                                                s_signal, n_index, t_price, s_time = signal_triggered_output(
+                                                    subsequent_index,
+                                                    potential_ob_time,
+                                                    red_candle_high,
+                                                    trade_type,
+                                                    side,
+                                                    signal,
+                                                    signals_counter
+                                                )
+                                            else:
+                                                print(f"Red candle is bigger than threshold ({ob_candle_size})")
                                         else:
                                             print(
                                                 f"Red candle found, but it closed not above the level. "
