@@ -1,6 +1,6 @@
 import winsound
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 from data_handling_realtime import (save_order_parameters_to_file, get_current_pending_order_direction,
                                     save_list_of_orders_to_file, get_position_state)
 import time
@@ -33,7 +33,7 @@ def send_buy_sell_orders(
 ):
 
     current_time = pd.to_datetime(datetime.now())
-    current_time -= timedelta(hours=2)              # Sync with MT5 server time
+    # current_time -= timedelta(hours=2)              # Sync with MT5 server time
     current_order_timestamp = pd.to_datetime(current_order_timestamp)
     time_difference_current_time_order = None
 
@@ -61,7 +61,7 @@ def send_buy_sell_orders(
 
                         winsound.PlaySound('chord.wav', winsound.SND_FILENAME)
                         print()
-                        print(f'{n_index} ▲ ▲ ▲ Buy order has been sent to NT8! ▲ ▲ ▲'.upper())
+                        print(f'{n_index} ▲ ▲ ▲ Buy order has been sent to NT8! ▲ ▲ ▲ {current_time}'.upper())
 
                         # ORDER PARAMETERS
                         entry_price = last_candle_high
@@ -128,7 +128,7 @@ def send_buy_sell_orders(
                         # Play sound to indicate order sent
                         winsound.PlaySound('chord.wav', winsound.SND_FILENAME)
                         print()
-                        print(f'{n_index} ▼ ▼ ▼ Sell order has been sent to NT8! ▼ ▼ ▼'.upper())
+                        print(f'{n_index} ▼ ▼ ▼ Sell order has been sent to NT8! ▼ ▼ ▼ {current_time}'.upper())
 
                         # ORDER PARAMETERS
                         entry_price = last_candle_low

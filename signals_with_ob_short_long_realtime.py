@@ -152,10 +152,10 @@ def level_rejection_signals(
                                                 print(f'Current green candle low: {green_candle_low}')
 
                                                 print(
-                                                    f"○ Green candle is below the SR level at index {subsequent_index}, "
+                                                    f"○ Green candle closed below the SR level at index {subsequent_index}, "
                                                     f"Time: {potential_ob_time}"
                                                 )
-                                                print('PLACE STOPMARKET.1A')
+                                                print('SEND STOPMARKET.1A')
                                                 signal = f'-100+{subsequent_index}'
 
                                                 signals_counter += 1
@@ -172,7 +172,7 @@ def level_rejection_signals(
 
                                             else:
                                                 print(
-                                                    f"Green candle found, but it's not below the level. "
+                                                    f"Green candle found, but it closed not below the level. "
                                                     f"Checking next candle...")
 
                         # BR-D LOGIC BEGIN HERE ******************************************************************************
@@ -236,10 +236,10 @@ def level_rejection_signals(
                                             print(f'Current green candle low: {green_candle_low}')
 
                                             print(
-                                                f"⦿ It's below the level at index {subsequent_index}, "
+                                                f"⦿ It closed below the level at index {subsequent_index}, "
                                                 f"Time: {potential_ob_time}"
                                             )
-                                            print('PLACE STOPMARKET.1B')
+                                            print('SEND STOPMARKET.1B')
                                             signal = f'-100+{subsequent_index}'
                                             signals_counter += 1
 
@@ -255,7 +255,7 @@ def level_rejection_signals(
 
                                         else:
                                             print(
-                                                f"Green candle found, but it's not below the level. "
+                                                f"Green candle found, but it closed not below the level. "
                                                 f"Checking next candle...")
 
                         #  ********************************************************************************************
@@ -318,10 +318,10 @@ def level_rejection_signals(
                                                 print(f'Current red candle high: {red_candle_high}')
 
                                                 print(
-                                                    f"Red candle is above the SR level at index {subsequent_index}, "
+                                                    f"Red candle closed above the SR level at index {subsequent_index}, "
                                                     f"Time: {potential_ob_time}"
                                                 )
-                                                print('PLACE STOPMARKET.2A')
+                                                print('SEND STOPMARKET.2A')
                                                 signal = f'100+{subsequent_index}'
                                                 signals_counter += 1
 
@@ -336,7 +336,7 @@ def level_rejection_signals(
                                                 )
 
                                             else:
-                                                print(f"Red candle found, but it's not above the level. "
+                                                print(f"Red candle found, but it closed not above the level. "
                                                       f"Checking next candle...")
 
                         # BR-O LOGIC BEGIN HERE ****************************************************************************
@@ -398,10 +398,10 @@ def level_rejection_signals(
                                             print(f'Current red candle high: {red_candle_high}')
 
                                             print(
-                                                f"⦿ It's above the level at index {subsequent_index}, "
+                                                f"⦿ It closed above the level at index {subsequent_index}, "
                                                 f"Time: {potential_ob_time}"
                                             )
-                                            print('PLACE STOPMARKET.2B')
+                                            print('SEND STOPMARKET.2B')
                                             signal = f'100+{subsequent_index}'
                                             signals_counter += 1
 
@@ -417,7 +417,7 @@ def level_rejection_signals(
 
                                         else:
                                             print(
-                                                f"Red candle found, but it's not above the level. "
+                                                f"Red candle found, but it closed not above the level. "
                                                 f"Checking next candle...")
                     else:
                         print(f'Signals_threshold: {signals_threshold} reached')

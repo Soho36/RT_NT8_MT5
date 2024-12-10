@@ -1,5 +1,6 @@
 import pandas as pd
-# from datetime import datetime, timedelta
+from datetime import datetime
+import time
 
 # log_file_reading_interval = 1       # File reading interval (sec)
 
@@ -36,6 +37,8 @@ list_of_orders_path = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\list_of
 position_state_path = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\position_state.txt'
 
 current_order_direction_path = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\current_order_direction.txt'
+
+current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def leave_only_last_line():     # Clear file before starting the script
@@ -108,7 +111,6 @@ def get_levels_from_file(last_datetime_of_df):
 
 #   Remove level which has reached time threshold from file
 def remove_expired_levels(level_lifetime_minutes, dataframe_from_log, interacted_levels):
-
     current_time = dataframe_from_log.index[-1]  # Timestamp of the last line of dataframe
     updated_levels = []
     print('\nLevels management:')
@@ -157,9 +159,18 @@ def get_current_pending_order_direction():
 
 
 def save_order_parameters_to_file(line_order_parameters):   # Called from orders_sender.py
-    with open(nt8_buy_sell_signals_for_path, 'w', encoding='utf-8') as file:
-        file.writelines(line_order_parameters)
-        print('NEW ORDER IS SUCCESSFULLY SAVED TO FILE')
+    retries = 5
+    for attempt in range(retries):
+        try:
+            with open(nt8_buy_sell_signals_for_path, 'w', encoding='utf-8') as file:
+                file.writelines(line_order_parameters)
+                print(f"NEW ORDER IS SUCCESSFULLY SAVED TO FILE{current_time}")
+            break
+        except PermissionError:
+            print(f"Attempt {attempt + 1} failed. Retrying...")
+            time.sleep(1)
+    else:
+        print("Failed to write to the file after multiple attempts.")
 
 
 # Create orders list file to track orders
