@@ -164,7 +164,7 @@ def save_order_parameters_to_file(line_order_parameters):   # Called from orders
         try:
             with open(nt8_buy_sell_signals_for_path, 'w', encoding='utf-8') as file:
                 file.writelines(line_order_parameters)
-                print(f"NEW ORDER IS SUCCESSFULLY SAVED TO FILE{current_time}")
+                print(f"NEW ORDER IS SUCCESSFULLY SAVED TO FILE")
             break
         except PermissionError:
             print(f"Attempt {attempt + 1} failed. Retrying...")

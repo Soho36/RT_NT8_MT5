@@ -19,7 +19,7 @@ risk_reward = 1                     # Risk/Reward ratio (Not used with multiple 
 stop_loss_offset = 1                # Is added to SL for Shorts and subtracted for Longs (can be equal to spread)
 
 # hardcoded_sr_levels = [('2024-11-02 16:19:00', 69245.00), ('2024-11-02 16:19:00', 69167.00)]  # Example support levels
-ob_candle_size = 25
+ob_candle_size = 30
 level_interactions_threshold = 3    # Times
 max_time_waiting_for_entry = 30     # Minutes
 

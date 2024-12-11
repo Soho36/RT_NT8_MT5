@@ -172,7 +172,7 @@ def level_rejection_signals(
                                                         signals_counter
                                                     )
                                                 else:
-                                                    print(f"Green candle is bigger than threshold ({ob_candle_size})")
+                                                    print(f"Green candle is bigger than max size ({ob_candle_size})")
                                             else:
                                                 print(
                                                     f"Green candle found, but it closed not below the level. "
@@ -257,7 +257,7 @@ def level_rejection_signals(
                                                     signals_counter
                                                 )
                                             else:
-                                                print(f"Green candle is bigger than threshold ({ob_candle_size})")
+                                                print(f"Green candle is bigger than max size ({ob_candle_size})")
                                         else:
                                             print(
                                                 f"Green candle found, but it closed not below the level. "
@@ -324,7 +324,7 @@ def level_rejection_signals(
                                                 print(f'Current red candle high: {red_candle_high}')
 
                                                 print(
-                                                    f"Red candle closed above the SR level at index {subsequent_index}, "
+                                                    f"Red candle closed above the level at index {subsequent_index}, "
                                                     f"Time: {potential_ob_time}"
                                                 )
                                                 if red_candle_high - red_candle_low <= ob_candle_size:
@@ -342,7 +342,7 @@ def level_rejection_signals(
                                                         signals_counter
                                                     )
                                                 else:
-                                                    print(f"Red candle is bigger than threshold ({ob_candle_size})")
+                                                    print(f"Red candle is bigger than max size ({ob_candle_size})")
                                             else:
                                                 print(f"Red candle found, but it closed not above the level. "
                                                       f"Checking next candle...")
@@ -425,7 +425,7 @@ def level_rejection_signals(
                                                     signals_counter
                                                 )
                                             else:
-                                                print(f"Red candle is bigger than threshold ({ob_candle_size})")
+                                                print(f"Red candle is bigger than max size ({ob_candle_size})")
                                         else:
                                             print(
                                                 f"Red candle found, but it closed not above the level. "
