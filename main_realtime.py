@@ -29,7 +29,7 @@ clear_csv_before_start = True
 # **************************************************************************************************************
 
 # LIIKURI PATHS
-path_ohlc_check_for_change = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\'
+path_ohlc_check_for_change = 'C:\\Users\\Vova deduskin lap\\PycharmProjects\\RT_NT8\\'
 file = 'OHLCVData_1.csv'
 
 # SILLAMAE PATHS

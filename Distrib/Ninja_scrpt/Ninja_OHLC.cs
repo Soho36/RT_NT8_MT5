@@ -8,7 +8,8 @@ namespace NinjaTrader.NinjaScript.Strategies
     public class SaveOHLCVToFile : Strategy
     {
         // private string filePath = "E:\\YandexDisk\\Documents\\55\\OHLCVData_1.csv";
-		private string filePath = "C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\OHLCVData_1.csv";
+		// private string filePath = "C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\OHLCVData_1.csv";
+		private string filePath = "C:\\Users\\Vova deduskin lap\\PycharmProjects\\RT_NT8\\OHLCVData_1.csv";
         private bool isLiveData = false;
 
         // OnStateChange is used to initialize the strategy
@@ -19,7 +20,7 @@ namespace NinjaTrader.NinjaScript.Strategies
                 Name = "SaveOHLCVToFile";
                 Calculate = Calculate.OnBarClose; // Trigger logic on bar close
             }
-            
+
             else if (State == State.Realtime)
             {
                 // Transitioning to real-time

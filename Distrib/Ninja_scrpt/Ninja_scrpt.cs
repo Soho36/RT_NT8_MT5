@@ -29,25 +29,26 @@ namespace NinjaTrader.NinjaScript.Strategies
     {
         private bool executeLongTrade = false;
         private bool executeShortTrade = false;
-        
+
 		private double entryPrice = 0;
 		private double stopPrice = 0;
-		
+
         private double targetPrice1 = 0;
         private double targetPrice2 = 0;
 		private double targetPrice3 = 0;
-		
+
 		private Order longOrder1;
 		private Order longOrder2;
 		private Order longOrder3;
 		private Order shortOrder1;
 		private Order shortOrder2;
 		private Order shortOrder3;
-		
+
 		private string lastPositionState = "closed"; // Tracks the last written position state
-		private string positionStateFilePath = "C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\position_state.txt";
-		
-		private string activeOrdersFilePath = "C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\current_order_direction.txt";
+		// private string positionStateFilePath = "C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\position_state.txt";
+		private string positionStateFilePath = "C:\\Users\\Vova deduskin lap\\PycharmProjects\\RT_NT8\\position_state.txt";
+
+		private string activeOrdersFilePath = "C:\\Users\\Vova deduskin lap\\PycharmProjects\\RT_NT8\\current_order_direction.txt";
 		// Declare a Dictionary to Track Order Ages
 		private Dictionary<string, int> orderCreationCandle = new Dictionary<string, int>();
 
@@ -73,7 +74,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 			if (CurrentBars[0] < BarsRequiredToTrade)
 				return;
 
-			string signalFilePath = "C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\trade_signal.txt";
+			string signalFilePath = "C:\\Users\\Vova deduskin lap\\PycharmProjects\\RT_NT8\\trade_signal.txt";
 
 			if (File.Exists(signalFilePath))
 			{
@@ -98,7 +99,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 							double.TryParse(parts[3].Trim(), out targetPrice1) &&   // Take-profit1 price
 							double.TryParse(parts[4].Trim(), out targetPrice2) &&	// Take-profit2 price
 							double.TryParse(parts[5].Trim(), out targetPrice3)		// Take-profit3 price
-							)             
+							)
 						{
 							if (tradeDirection.Equals("Buy", StringComparison.OrdinalIgnoreCase))
 							{
@@ -193,13 +194,13 @@ namespace NinjaTrader.NinjaScript.Strategies
 					if (shortOrder1 == null || shortOrder1.OrderState != OrderState.Working)
 					{
 						if (entryPrice >= GetCurrentBid())
-							
+
 						{
 							Print("Error: Sell stop order price must be below the current market price.");
 							executeShortTrade = false; // Reset flag
 							return; // Exit without placing the order
 						}
-							
+
 							shortOrder1 = EnterShortStopMarket(0, true, 2, entryPrice, "Short1");
 							orderCreationCandle[shortOrder1.OrderId] = CurrentBar; // Track candle index for the order
 							SetStopLoss("Short1", CalculationMode.Price, stopPrice, false);
@@ -209,13 +210,13 @@ namespace NinjaTrader.NinjaScript.Strategies
 					if (shortOrder2 == null || shortOrder2.OrderState != OrderState.Working)
 					{
 						if (entryPrice >= GetCurrentBid())
-						
+
 						{
 							Print("Error: Sell stop order price must be below the current market price.");
 							executeShortTrade = false; // Reset flag
 							return; // Exit without placing the order
 						}
-						
+
 						shortOrder2 = EnterShortStopMarket(0, true, 1, entryPrice, "Short2");
 						orderCreationCandle[shortOrder2.OrderId] = CurrentBar; // Track candle index for the order
 						SetStopLoss("Short2", CalculationMode.Price, stopPrice, false);
@@ -225,19 +226,19 @@ namespace NinjaTrader.NinjaScript.Strategies
 					if (shortOrder3 == null || shortOrder3.OrderState != OrderState.Working)
 					{
 						if (entryPrice >= GetCurrentBid())
-						
+
 						{
 							Print("Error: Sell stop order price must be below the current market price.");
 							executeShortTrade = false; // Reset flag
 							return; // Exit without placing the order
 						}
-						
+
 						shortOrder3 = EnterShortStopMarket(0, true, 1, entryPrice, "Short3");
 						orderCreationCandle[shortOrder3.OrderId] = CurrentBar; // Track candle index for the order
 						SetStopLoss("Short3", CalculationMode.Price, stopPrice, false);
 						SetProfitTarget("Short3", CalculationMode.Price, targetPrice3);
 						Print($"3-rd SHORT stop-market order placed at {entryPrice} with TP3: {targetPrice3}, SL: {stopPrice}");
-					}		
+					}
 				}
 				catch (Exception ex)
 				{
@@ -253,12 +254,12 @@ namespace NinjaTrader.NinjaScript.Strategies
 		            // Move stop loss to breakeven (entry price) for Long2
 		            SetStopLoss("Long2", CalculationMode.Price, Position.AveragePrice, false);
 		            Print($"Stop loss moved to breakeven for Long2 at price: {Position.AveragePrice}");
-					
+
 					// Move stop loss to breakeven (entry price) for Long3
 		            SetStopLoss("Long3", CalculationMode.Price, Position.AveragePrice, false);
 		            Print($"Stop loss moved to breakeven for Long3 at price: {Position.AveragePrice}");
-					
-					stopLossMovedToBreakevenLong1 = true; // Set flag to prevent repeated execution					            
+
+					stopLossMovedToBreakevenLong1 = true; // Set flag to prevent repeated execution
 		        }
 		    }
 
@@ -270,16 +271,16 @@ namespace NinjaTrader.NinjaScript.Strategies
 		            // Move stop loss to breakeven (entry price) for Short2
 		            SetStopLoss("Short2", CalculationMode.Price, Position.AveragePrice, false);
 		            Print($"Stop loss moved to breakeven for Short2 at price: {Position.AveragePrice}");
-					
+
 					// Move stop loss to breakeven (entry price) for Short3
 		            SetStopLoss("Short3", CalculationMode.Price, Position.AveragePrice, false);
 		            Print($"Stop loss moved to breakeven for Short3 at price: {Position.AveragePrice}");
-					
+
 					stopLossMovedToBreakevenShort1 = true; // Set flag to prevent repeated execution
 		        }
 		    }
 		}
-    
+
 
 		protected override void OnExecutionUpdate(Cbi.Execution execution, string executionId, double price, int quantity, MarketPosition marketPosition, string orderId, DateTime time)
 		{
@@ -351,7 +352,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 				Print($"Error canceling orders: {ex.Message}");
 			}
 		}
-		
+
 		private void CancelOldOrders(int currentCandleIndex, int maxCandleAge)
 		{
 			try
@@ -367,7 +368,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
 					// Check only orders in working or accepted state
 					if (order.OrderState == OrderState.Working || order.OrderState == OrderState.Accepted)
-					{	
+					{
 						// Check if the order is being tracked in the dictionary
 						if (orderCreationCandle.TryGetValue(order.OrderId, out int orderCandleIndex))
 						{
@@ -399,6 +400,5 @@ namespace NinjaTrader.NinjaScript.Strategies
 				Print($"Error in CancelOldOrders: {ex.Message}");
 			}
 		}
-
     }
 }
