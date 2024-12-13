@@ -144,9 +144,10 @@ def level_rejection_signals(
                                         # Print diagnostic information
                                         print(f"Looking for GREEN candle at index {subsequent_index}, "
                                               f"Time: {potential_ob_time}")
-
-                                        # Check for green candle and that it’s below SR level
+                                        # If candle is Green
                                         if potential_ob_candle['Close'] > potential_ob_candle['Open']:
+
+                                            # Check for green candle and that it’s below SR level
                                             if potential_ob_candle['Close'] < current_sr_level:
                                                 green_candle_high = potential_ob_candle['High']
                                                 green_candle_low = potential_ob_candle['Low']
