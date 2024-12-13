@@ -145,6 +145,7 @@ def level_rejection_signals(
                                               f"Time: {potential_ob_time}")
 
                                         if potential_ob_candle['Close'] > potential_ob_candle['Open']:
+
                                             # Check for green candle and that it’s below SR level
                                             if potential_ob_candle['Low'] < current_sr_level:
 
@@ -307,13 +308,13 @@ def level_rejection_signals(
                                             f"Time: {potential_ob_time}"
                                         )
                                         # Check if it's a red candle (close < open)
-                                        if potential_ob_candle['High'] < potential_ob_candle['Open']:
+                                        if potential_ob_candle['Close'] < potential_ob_candle['Open']:
                                             print(
                                                 f"○ Last RED candle found at index {subsequent_index}, "
                                                 f"Time: {potential_ob_time}"
                                             )
                                             # Check if the red candle is below the SR level
-                                            if potential_ob_candle['Close'] > current_sr_level:
+                                            if potential_ob_candle['High'] > current_sr_level:
                                                 red_candle_high = potential_ob_candle['High']
                                                 print(f'Current red candle high: {red_candle_high}')
 
