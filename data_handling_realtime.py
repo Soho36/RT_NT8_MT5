@@ -28,9 +28,13 @@ nt8_buy_sell_signals_for_path = (
      )
 
 # Levels PATH for NinjaTrader:
-levels_path = (
-    f'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\hardcoded_sr_levels.csv'
-)
+# levels_path = (
+#     f'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\hardcoded_sr_levels.csv'
+# )
+
+nt8_levels_path = 'nt8_levels.csv'
+pyhon_valid_levels_path = 'python_valid_levels.csv'
+
 
 list_of_orders_path = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\list_of_orders.csv'
 
@@ -75,35 +79,30 @@ def get_levels_from_file(last_datetime_of_df):
     updated_lines = []
     levels = []
 
-    with open(levels_path, 'r', encoding='utf-8') as file:
+    with open(nt8_levels_path, 'r', encoding='utf-8') as file:
         for line in file:
             parts = line.strip().split(',')
 
-            if len(parts) == 2:
+            if len(parts) == 3:
                 # Properly formatted line
+                line_key = parts[0].strip()
                 timestamp = parts[0].strip()
                 level = float(parts[1].strip())
-            # else:
-            #     # Line with only a level; add current timestamp
-            #     current_time = datetime.now()
-            #
-            #     # if current_time.second > 0:
-            #     current_time -= timedelta(hours=2)
-            #
-            #     current_time = current_time.replace(second=0, microsecond=0)
-            #
-            #     timestamp = current_time.strftime('%Y-%m-%d %H:%M:%S')
-            #     level = float(parts[0].strip())
+
             else:
+                line_key = parts[0].strip()
                 timestamp = last_datetime_of_df
-                level = float(parts[0].strip())
+                level = float(parts[1].strip())
+
+            # level = float(parts[1].strip())
+            # timestamp = last_datetime_of_df
 
             # Add the formatted line to the update list
-            updated_lines.append(f"{timestamp}, {level}\n")
+            updated_lines.append(f"{line_key}, {timestamp}, {level}\n")
             levels.append((timestamp, level))
 
     # Rewrite the file with only properly formatted lines
-    with open(levels_path, 'w', encoding='utf-8') as file:
+    with open(pyhon_valid_levels_path, 'w', encoding='utf-8') as file:
         file.writelines(updated_lines)
 
     return levels
@@ -116,7 +115,7 @@ def remove_expired_levels(level_lifetime_minutes, dataframe_from_log, interacted
     print('\nLevels management:')
     print('interacted_levels', interacted_levels)
     print(f'level_lifetime_minutes: {level_lifetime_minutes} minutes\n')
-    with open(levels_path, 'r', encoding='utf-8') as file:
+    with open(nt8_levels_path, 'r', encoding='utf-8') as file:
         for line in file:
             timestamp_str, file_level = line.strip().split(',')  # Get timestamp and level from file
             file_level = float(file_level.strip())
@@ -141,7 +140,7 @@ def remove_expired_levels(level_lifetime_minutes, dataframe_from_log, interacted
                 print(f"Removing expired level: {timestamp_str}, {file_level}")
 
     # Write the remaining levels back to the file
-    with open(levels_path, 'w', encoding='utf-8') as file:
+    with open(nt8_levels_path, 'w', encoding='utf-8') as file:
         file.writelines(updated_levels)
 
 

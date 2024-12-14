@@ -4,6 +4,7 @@ import pandas as pd
 def levels_discovery(dataframe_from_log, hardcoded_sr_levels):
 
     hardcoded_sr_levels = [(pd.Timestamp(date_str), price) for date_str, price in hardcoded_sr_levels]
+    print(hardcoded_sr_levels)
 
     levels_startpoints_tuples = []
     levels_endpoints_tuples = []
