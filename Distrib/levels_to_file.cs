@@ -9,7 +9,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 {
     public class LevelsToFile : Strategy
     {
-        private string filePath = @"C:\Users\Liikurserv\PycharmProjects\RT_Ninja\hardcoded_sr_levels_2.csv";
+        private string filePath = @"C:\Users\Liikurserv\PycharmProjects\RT_Ninja\nt8_levels.csv";
 
         private Dictionary<string, double> levelPrices = new Dictionary<string, double>();
 
