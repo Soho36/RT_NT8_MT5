@@ -23,7 +23,7 @@ ob_candle_size = 30
 level_interactions_threshold = 3    # Times
 max_time_waiting_for_entry = 30     # Minutes
 
-level_lifetime_minutes = 30   # Minutes after interaction
+level_lifetime_minutes = 3   # Minutes after interaction
 
 clear_csv_before_start = True
 # **************************************************************************************************************

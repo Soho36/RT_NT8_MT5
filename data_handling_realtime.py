@@ -108,8 +108,9 @@ def get_levels_from_file(last_datetime_of_df):
 
 #   Remove level which has reached time threshold from file
 def remove_expired_levels(level_lifetime_minutes, dataframe_from_log, interacted_levels):
-    current_time = dataframe_from_log.index[-1]  # Timestamp of the last line of dataframe
+    curr_time = dataframe_from_log.index[-1]  # Timestamp of the last line of dataframe
     updated_levels = []
+    expired_levels = []
     print('\nLevels management:')
     print('interacted_levels', interacted_levels)
     print(f'level_lifetime_minutes: {level_lifetime_minutes} minutes\n')
@@ -124,18 +125,21 @@ def remove_expired_levels(level_lifetime_minutes, dataframe_from_log, interacted
             for interaction_time, level in interacted_levels:
                 if level == file_level:  # Match the file level with interacted level
                     # Calculate the time difference
-                    time_diff = (current_time - pd.to_datetime(interaction_time)).total_seconds() / 60  # Convert to minutes
+                    time_diff = (curr_time - pd.to_datetime(interaction_time)).total_seconds() / 60  # Convert to minutes
                     print(f"Level {level}: Time difference {time_diff:.2f} minutes")
 
                     if time_diff < level_lifetime_minutes:
                         level_still_valid = True  # Mark as valid
                         break  # No need to check other interactions for the same level
 
-                    # Add the level back if it’s still valid or hasn’t been interacted with
+            # Add the level back if it’s still valid or hasn’t been interacted with
             if level_still_valid or all(file_level != lvl for _, lvl in interacted_levels):
                 updated_levels.append(line)
             else:
                 print(f"Removing expired level: {timestamp_str}, {file_level}")
+                expired_levels.append(line)
+                with open(expired_levels_path, 'w', encoding='utf-8') as file:
+                    file.writelines(expired_levels)
 
     # Write the remaining levels back to the file
     with open(pyhon_valid_levels_path, 'w', encoding='utf-8') as file:
