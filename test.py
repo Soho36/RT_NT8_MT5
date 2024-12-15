@@ -1,48 +1,56 @@
-import os
+# Function to read levels from the first file (NT8 chart levels)
+def read_chart_levels(file_path):
+    levels = set()
+    with open(file_path, 'r') as file:
+        for line in file:
+            # Extract price after the comma
+            try:
+                price = float(line.split(',')[-1].strip())
+                levels.add(price)
+            except ValueError:
+                print(f"Invalid line in chart levels file: {line}")
+    return levels
 
-nt8_file = "nt8_levels.csv"
-python_file = "python_valid_levels.csv"
-expired_file = "expired_levels.csv"
+
+# Function to read prices from the second and third files (script and expired levels)
+def read_price_levels(file_path):
+    levels = set()
+    with open(file_path, 'r') as file:
+        for line in file:
+            # Extract price after the comma
+            try:
+                price = float(line.split(',')[1].strip())
+                levels.add(price)
+            except (IndexError, ValueError):
+                print(f"Invalid line in file: {line}")
+    return levels
 
 
-# Load levels from files
-def load_levels(file_path):
-    if not os.path.exists(file_path):
-        return set()
-    with open(file_path, 'r') as f:
-        return {line.strip() for line in f}
-
-
-nt8_levels = load_levels(nt8_file)
-python_levels = load_levels(python_file)
-expired_levels = load_levels(expired_file)
-print('nt8_levels', nt8_levels)
-print('python_levels', python_levels)
-print('expired_levels', expired_levels)
-
-# Process NT8 levels
-new_levels = nt8_levels - python_levels - expired_levels
-print('new_levels', new_levels)
-
-if new_levels:
-    with open(python_file, 'a') as f:
+# Function to append new levels to the second file
+def append_new_levels(file_path, new_levels):
+    with open(file_path, 'a') as file:
         for level in new_levels:
-            f.write(level + '\n')
-    print(f"Added new levels: {new_levels}")
+            # Add a dummy timestamp for simplicity (could be replaced with actual logic)
+            file.write(f"{level}\n")
 
-# Remove expired levels
-current_valid_levels = python_levels & nt8_levels
-expired_now = python_levels - current_valid_levels
-print('current_valid_levels', current_valid_levels)
-print('expired_now', expired_now)
 
-if expired_now:
-    with open(expired_file, 'a') as f:
-        for level in expired_now:
-            f.write(level + '\n')
-    print(f"Expired levels: {expired_now}")
+# Main logic
 
-# Update Python valid levels file
-with open(python_file, 'w') as f:
-    for level in current_valid_levels:
-        f.write(level + '\n')
+
+# File paths
+chart_levels_file = "chart_levels.txt"
+python_levels_file = "python_levels.txt"
+expired_levels_file = "expired_levels.txt"
+
+# Step 1: Read levels from files
+chart_levels = read_chart_levels(chart_levels_file)
+read_price_levels(python_levels_file)
+expired_levels = read_price_levels(expired_levels_file)
+
+# Step 2: Find new levels (in chart_levels but not in expired_levels)
+new_levels = chart_levels - expired_levels
+
+# Step 3: Append new levels to the Python levels file
+append_new_levels(python_levels_file, new_levels)
+
+print("New levels added to the Python script file.")

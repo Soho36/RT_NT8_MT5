@@ -2,7 +2,8 @@ import time
 import os
 import pandas as pd
 from data_handling_realtime import (get_dataframe_from_file, get_levels_from_file, leave_only_last_line,
-                                    remove_expired_levels, get_last_order_time_from_file)
+                                    remove_expired_levels, get_last_order_time_from_file, read_chart_levels,
+                                    read_price_levels, append_new_levels)
 from price_levels_manual_realtime import process_levels
 from signals_with_ob_short_long_realtime import level_rejection_signals
 from orders_sender import last_candle_ohlc, send_buy_sell_orders
@@ -72,13 +73,17 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
     print('\n********************************************************************************************************')
     print('\n********************************************************************************************************')
 
+    nt8_levels_path = 'nt8_levels.csv'
+    valid_levels_path = 'python_valid_levels.csv'
+    expired_levels_path = 'expired_levels.csv'
+
     # GET DATAFRAME FROM LOG
     dataframe_from_log, last_datetime_of_df = get_dataframe_from_file(max_time_waiting_for_entry)
     # print('\nget_dataframe_from_file: \n', dataframe_from_log[-10:])
     # print('last_date!!!!!', last_datetime_of_df)
 
     # GET LEVELS FROM FILE
-    hardcoded_sr_levels = get_levels_from_file(last_datetime_of_df)
+    hardcoded_sr_levels = get_levels_from_file(last_datetime_of_df, valid_levels_path)
     # print('hardcoded_sr_levels from file: \n', hardcoded_sr_levels)
 
     # PRICE LEVELS
@@ -114,8 +119,22 @@ def run_main_functions(b_s_flag, s_s_flag, l_signal):
     print(f'\nCandles processed since start: {candle_counter}')
 
     # Remove the level which has been hit threshold
+    remove_expired_levels(level_lifetime_minutes, dataframe_from_log, interacted_levels, valid_levels_path, expired_levels_path)
 
-    remove_expired_levels(level_lifetime_minutes, dataframe_from_log, interacted_levels)
+    chart_levels = read_chart_levels(nt8_levels_path)
+    valid_levels = read_price_levels(valid_levels_path)
+    expired_levels = read_price_levels(expired_levels_path)
+
+    # Find new levels (in chart_levels but not in expired_levels)
+
+    new_levels = chart_levels - expired_levels - valid_levels
+
+    # Append new levels to the Python levels file
+
+    append_new_levels(valid_levels_path, new_levels)
+    print(f"New levels added: {new_levels}")
+
+    # print("New levels added to the Python script file.")
 
     # LAST CANDLE OHLC (current OHLC)
     (
