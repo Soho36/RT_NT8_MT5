@@ -83,26 +83,26 @@ def get_levels_from_file(last_datetime_of_df):
         for line in file:
             parts = line.strip().split(',')
 
-            if len(parts) == 3:
+            if len(parts) == 2:
                 # Properly formatted line
-                line_key = parts[0].strip()
+                # line_key = parts[0].strip()
                 timestamp = parts[0].strip()
                 level = float(parts[1].strip())
 
             else:
-                line_key = parts[0].strip()
+                # line_key = parts[0].strip()
                 timestamp = last_datetime_of_df
-                level = float(parts[1].strip())
+                level = float(parts[0].strip())
 
             # level = float(parts[1].strip())
             # timestamp = last_datetime_of_df
 
             # Add the formatted line to the update list
-            updated_lines.append(f"{line_key}, {timestamp}, {level}\n")
+            updated_lines.append(f"{timestamp}, {level}\n")
             levels.append((timestamp, level))
 
     # Rewrite the file with only properly formatted lines
-    with open(pyhon_valid_levels_path, 'w', encoding='utf-8') as file:
+    with open(nt8_levels_path, 'w', encoding='utf-8') as file:
         file.writelines(updated_lines)
 
     return levels
