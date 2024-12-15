@@ -138,7 +138,7 @@ def remove_expired_levels(level_lifetime_minutes, dataframe_from_log, interacted
             else:
                 print(f"Removing expired level: {timestamp_str}, {file_level}")
                 expired_levels.append(line)
-                with open(expired_levels_path, 'w', encoding='utf-8') as file:
+                with open(expired_levels_path, 'a', encoding='utf-8') as file:
                     file.writelines(expired_levels)
 
     # Write the remaining levels back to the file
