@@ -79,25 +79,25 @@ def send_buy_sell_orders(
                             f'Buy, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}, {take_profit_price_3}'
                         line_order_cancel = 'cancel'
 
-                        if get_current_pending_order_direction() == 'sell':   # If there is an active sell order:
-                            print('Cancelling previous order...')
-                            save_order_parameters_to_file(line_order_cancel)    # cancel it and...
-                            time.sleep(1)
-                            print('Submitting new order: ', line_order_parameters_nt8)
-                            save_order_parameters_to_file(line_order_parameters_nt8)    # save new order to file
+                        # if get_current_pending_order_direction() == 'sell':   # If there is an active sell order:
+                        #     print('Cancelling previous order...')
+                        #     save_order_parameters_to_file(line_order_cancel)    # cancel it and...
+                        #     time.sleep(1)
+                        #     print('Submitting new order: ', line_order_parameters_nt8)
+                        #     save_order_parameters_to_file(line_order_parameters_nt8)    # save new order to file
+                        #
+                        #     # line_order_parameters_to_order_list = f'{n_index},Buy,{t_price},{s_time}'
+                        #     line_order_parameters_to_order_list = f'{current_order_timestamp}'
+                        #     print('line_order_parameters_to_order_list: ', line_order_parameters_to_order_list)
+                        #     save_list_of_orders_to_file(line_order_parameters_to_order_list)
 
-                            # line_order_parameters_to_order_list = f'{n_index},Buy,{t_price},{s_time}'
-                            line_order_parameters_to_order_list = f'{current_order_timestamp}'
-                            print('line_order_parameters_to_order_list: ', line_order_parameters_to_order_list)
-                            save_list_of_orders_to_file(line_order_parameters_to_order_list)
-
-                        else:                                               # If there is no active sell orders:
-                            print('Submitting new order: ', line_order_parameters_nt8)
-                            save_order_parameters_to_file(line_order_parameters_nt8)
-                            # line_order_parameters_to_order_list = f'{n_index},Buy,{t_price},{s_time}'
-                            line_order_parameters_to_order_list = f'{current_order_timestamp}'
-                            print('line_order_parameters_to_order_list: ', line_order_parameters_to_order_list)
-                            save_list_of_orders_to_file(line_order_parameters_to_order_list)
+                        # else:                                               # If there is no active sell orders:
+                        print('Submitting new order: ', line_order_parameters_nt8)
+                        save_order_parameters_to_file(line_order_parameters_nt8)
+                        # line_order_parameters_to_order_list = f'{n_index},Buy,{t_price},{s_time}'
+                        line_order_parameters_to_order_list = f'{current_order_timestamp}'
+                        print('line_order_parameters_to_order_list: ', line_order_parameters_to_order_list)
+                        save_list_of_orders_to_file(line_order_parameters_to_order_list)
 
                         # Reset buy_signal flag after processing order to allow the next unique signal
                         buy_signal = False  # Prevent repeated order for the same signal
@@ -146,25 +146,25 @@ def send_buy_sell_orders(
                             f'Sell, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}, {take_profit_price_3}'
                         line_order_cancel = 'cancel'
 
-                        if get_current_pending_order_direction() == 'buy':                # If there is an active order:
-                            print('Cancelling previous order...')
-                            save_order_parameters_to_file(line_order_cancel)    # cancel it and...
-                            time.sleep(1)
-                            print('Submitting new order: ', line_order_parameters_nt8)
-                            save_order_parameters_to_file(line_order_parameters_nt8)  # save new order to file
+                        # if get_current_pending_order_direction() == 'buy':                # If there is an active order:
+                        #     print('Cancelling previous order...')
+                        #     save_order_parameters_to_file(line_order_cancel)    # cancel it and...
+                        #     time.sleep(1)
+                        #     print('Submitting new order: ', line_order_parameters_nt8)
+                        #     save_order_parameters_to_file(line_order_parameters_nt8)  # save new order to file
+                        #
+                        #     # line_order_parameters_to_order_list = f'{n_index},Sell,{t_price},{s_time}'
+                        #     line_order_parameters_to_order_list = f'{current_order_timestamp}'
+                        #     print('line_order_parameters_to_order_list: ', line_order_parameters_to_order_list)
+                        #     save_list_of_orders_to_file(line_order_parameters_to_order_list)
+                        # else:   # If there is no an active orders:
+                        print('Submitting new order: ', line_order_parameters_nt8)
+                        save_order_parameters_to_file(line_order_parameters_nt8)
 
-                            # line_order_parameters_to_order_list = f'{n_index},Sell,{t_price},{s_time}'
-                            line_order_parameters_to_order_list = f'{current_order_timestamp}'
-                            print('line_order_parameters_to_order_list: ', line_order_parameters_to_order_list)
-                            save_list_of_orders_to_file(line_order_parameters_to_order_list)
-                        else:                                                           # If there is no an active orders:
-                            print('Submitting new order: ', line_order_parameters_nt8)
-                            save_order_parameters_to_file(line_order_parameters_nt8)
-
-                            # line_order_parameters_to_order_list = f'{n_index},Sell,{t_price},{s_time}'
-                            line_order_parameters_to_order_list = f'{current_order_timestamp}'
-                            print('line_order_parameters_to_order_list: ', line_order_parameters_to_order_list)
-                            save_list_of_orders_to_file(line_order_parameters_to_order_list)
+                        # line_order_parameters_to_order_list = f'{n_index},Sell,{t_price},{s_time}'
+                        line_order_parameters_to_order_list = f'{current_order_timestamp}'
+                        print('line_order_parameters_to_order_list: ', line_order_parameters_to_order_list)
+                        save_list_of_orders_to_file(line_order_parameters_to_order_list)
 
                         # Reset sell_signal flag after processing order to allow the next unique signal
                         sell_signal = False  # Prevent repeated order for the same signal
