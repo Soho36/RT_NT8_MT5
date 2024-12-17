@@ -122,6 +122,10 @@ def level_rejection_signals(
                                     for subsequent_index in range(index + 1, len(output_df_with_levels)):
                                         potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
 
+                                        potential_ob_candle_center = (
+                                                potential_ob_candle['High'] - ((potential_ob_candle['High'] - potential_ob_candle['Low'])/2)
+                                        )
+
                                         # Convert to datetime for time calculations
                                         potential_ob_time = pd.to_datetime(potential_ob_candle['Time'])
                                         # Calculate time difference between the current potential candle
@@ -148,7 +152,7 @@ def level_rejection_signals(
                                         if potential_ob_candle['Close'] > potential_ob_candle['Open']:
 
                                             # Check for green candle and that it’s below SR level
-                                            if potential_ob_candle['Low'] < current_sr_level:
+                                            if potential_ob_candle_center < current_sr_level:
                                                 green_candle_high = potential_ob_candle['High']
                                                 green_candle_low = potential_ob_candle['Low']
                                                 print(f'Current green candle low: {green_candle_low}')
@@ -201,6 +205,11 @@ def level_rejection_signals(
 
                                     potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
 
+                                    potential_ob_candle_center = (
+                                            potential_ob_candle['High'] - (
+                                                (potential_ob_candle['High'] - potential_ob_candle['Low']) / 2)
+                                    )
+
                                     # Convert to datetime for time calculations
                                     potential_ob_time = pd.to_datetime(potential_ob_candle['Time'])
 
@@ -234,7 +243,7 @@ def level_rejection_signals(
                                         )
 
                                         # Check if the green candle is below the SR level
-                                        if potential_ob_candle['Low'] < current_sr_level:
+                                        if potential_ob_candle_center < current_sr_level:
                                             green_candle_high = potential_ob_candle['High']
                                             green_candle_low = potential_ob_candle['Low']
                                             print(f'Current green candle low: {green_candle_low}')
@@ -289,6 +298,10 @@ def level_rejection_signals(
 
                                         potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
 
+                                        potential_ob_candle_center = (
+                                                potential_ob_candle['High'] - (
+                                                    (potential_ob_candle['High'] - potential_ob_candle['Low']) / 2)
+                                        )
                                         # Convert to datetime for time calculations
                                         potential_ob_time = pd.to_datetime(potential_ob_candle['Time'])
                                         # Calculate time difference between the current potential candle
@@ -319,7 +332,7 @@ def level_rejection_signals(
                                                 f"Time: {potential_ob_time}"
                                             )
                                             # Check if the red candle is below the SR level
-                                            if potential_ob_candle['High'] > current_sr_level:
+                                            if potential_ob_candle_center > current_sr_level:
                                                 red_candle_high = potential_ob_candle['High']
                                                 red_candle_low = potential_ob_candle['Low']
                                                 print(f'Current red candle high: {red_candle_high}')
@@ -369,6 +382,11 @@ def level_rejection_signals(
 
                                     potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
 
+                                    potential_ob_candle_center = (
+                                            potential_ob_candle['High'] - (
+                                                (potential_ob_candle['High'] - potential_ob_candle['Low']) / 2)
+                                    )
+
                                     # Convert to datetime for time calculations
                                     potential_ob_time = pd.to_datetime(potential_ob_candle['Time'])
 
@@ -401,7 +419,7 @@ def level_rejection_signals(
                                             f"Time: {potential_ob_time}"
                                         )
                                         # Check if the red candle is above the SR level
-                                        if potential_ob_candle['High'] > current_sr_level:
+                                        if potential_ob_candle_center > current_sr_level:
                                             # Candle must be above the level
                                             red_candle_high = potential_ob_candle['High']
                                             red_candle_low = potential_ob_candle['Low']
