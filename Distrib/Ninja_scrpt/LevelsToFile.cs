@@ -3,14 +3,12 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using NinjaTrader.NinjaScript;
-using NinjaTrader.NinjaScript.DrawingTools;
 
 namespace NinjaTrader.NinjaScript.Strategies
 {
     public class LevelsToFile : Strategy
     {
-        private string filePath = @"C:\Users\Liikurserv\PycharmProjects\RT_Ninja\hardcoded_sr_levels_2.csv";
-
+        private string filePath = @"C:\Users\Liikurserv\PycharmProjects\RT_Ninja\nt8_levels.csv";
         private Dictionary<string, double> levelPrices = new Dictionary<string, double>();
 
         protected override void OnStateChange()
@@ -18,11 +16,15 @@ namespace NinjaTrader.NinjaScript.Strategies
             if (State == State.SetDefaults)
             {
                 Name = "LevelsToFile";
-                Calculate = Calculate.OnEachTick;
+                Calculate = Calculate.OnBarClose; // Run once per bar
+            }
+            else if (State == State.Configure)
+            {
+                LoadLevelsFromFile(); // Initialize levels
             }
         }
 
-        private void SaveLevelPrice(string tag, double price)
+        private void SaveAllLevelsToFile()
         {
             try
             {
@@ -33,11 +35,11 @@ namespace NinjaTrader.NinjaScript.Strategies
                         writer.WriteLine($"{entry.Key},{entry.Value:F2}");
                     }
                 }
-                Print($"Level {tag} -> {price:F2} saved to file.");
+                // Print("All levels saved to file.");
             }
             catch (Exception ex)
             {
-                Print($"Error saving level to file: {ex.Message}");
+                Print($"Error saving levels to file: {ex.Message}");
             }
         }
 
@@ -45,37 +47,29 @@ namespace NinjaTrader.NinjaScript.Strategies
         {
             if (File.Exists(filePath))
             {
-                string[] lines = File.ReadAllLines(filePath);
-                levelPrices.Clear();
-
-                foreach (var line in lines)
+                try
                 {
-                    string[] parts = line.Split(',');
-                    if (parts.Length == 2 && double.TryParse(parts[1], out double price))
+                    string[] lines = File.ReadAllLines(filePath);
+                    levelPrices.Clear();
+                    foreach (var line in lines)
                     {
-                        levelPrices[parts[0]] = price;
+                        string[] parts = line.Split(',');
+                        if (parts.Length == 2 && double.TryParse(parts[1], out double price))
+                        {
+                            levelPrices[parts[0]] = price;
+                        }
                     }
+                    Print("Levels loaded from file.");
+                }
+                catch (Exception ex)
+                {
+                    Print($"Error loading levels from file: {ex.Message}");
                 }
             }
         }
 
-		private void RemoveLevelFromChart(string tag)
-		{
-			// Iterate through the DrawObjects to find and remove the line
-			foreach (var drawObject in DrawObjects)
-			{
-				if (drawObject is DrawingTools.HorizontalLine horizontalLine && horizontalLine.Tag == tag)
-				{
-					RemoveDrawObject(tag);  // Pass the tag to remove the line
-					Print($"Removed {tag} from chart.");
-				}
-			}
-		}
-
         private void MonitorLevelChanges()
         {
-            LoadLevelsFromFile();
-
             HashSet<string> currentTags = new HashSet<string>();
 
             foreach (var drawObject in DrawObjects)
@@ -87,34 +81,29 @@ namespace NinjaTrader.NinjaScript.Strategies
 
                     currentTags.Add(tag);
 
-                    if (!levelPrices.ContainsKey(tag))
+                    if (!levelPrices.ContainsKey(tag) || Math.Abs(levelPrices[tag] - currentPrice) > Double.Epsilon)
                     {
-                        levelPrices[tag] = currentPrice;
+                        levelPrices[tag] = currentPrice; // Add or update level
+                        Print($"Level {tag} updated to {currentPrice:F2}");
                     }
-                    else if (Math.Abs(levelPrices[tag] - currentPrice) > Double.Epsilon)
-                    {
-                        levelPrices[tag] = currentPrice;
-                        Print($"Updated {tag} -> {currentPrice}");
-                    }
-
-                    SaveLevelPrice(tag, currentPrice);
                 }
             }
 
+            // Detect and remove deleted levels
             var deletedTags = levelPrices.Keys.Except(currentTags).ToList();
             foreach (var tag in deletedTags)
             {
-                RemoveLevelFromChart(tag);
-                levelPrices.Remove(tag);
-                Print($"Deleted {tag} from chart and file.");
+                levelPrices.Remove(tag); // Remove from dictionary
+                RemoveDrawObject(tag); // Directly remove from chart
+                Print($"Level {tag} removed.");
             }
 
-            SaveLevelPrice(string.Empty, 0);
+            SaveAllLevelsToFile(); // Save all changes once
         }
 
         protected override void OnBarUpdate()
         {
-            MonitorLevelChanges();
+            MonitorLevelChanges(); // Monitor levels once per bar
         }
     }
 }
