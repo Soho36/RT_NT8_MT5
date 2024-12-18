@@ -5,7 +5,8 @@ from data_handling_realtime import (
     save_order_parameters_to_file,
     # get_current_pending_order_direction,
     save_list_of_orders_to_file,
-    get_position_state
+    get_position_state_longs,
+    get_position_state_shorts
 )
 # import time
 
@@ -55,7 +56,7 @@ def send_buy_sell_orders(
     # +------------------------------------------------------------------+
     # BUY ORDER
     # +------------------------------------------------------------------+
-    if get_position_state() == '' or get_position_state() == 'closed' or get_position_state() == 'opened_short':
+    if get_position_state_longs() == '' or get_position_state_longs() == 'closed' or get_position_state_shorts() == 'opened_short':
         if not pd.isna(current_order_timestamp):
             if current_signal != last_signal:
                 # If time difference between current and last order is positive then it's accepted:
@@ -116,12 +117,12 @@ def send_buy_sell_orders(
         else:
             print('Longs: No new orders')
     else:
-        print('Longs: There is an open position. No new signals...'.upper())
+        print('Longs: There is an open long position. No new long signals...'.upper())
 
     # +------------------------------------------------------------------+
     # SELL ORDER
     # +------------------------------------------------------------------+
-    if get_position_state() == '' or get_position_state() == 'closed' or get_position_state() == 'opened_long':
+    if get_position_state_shorts() == '' or get_position_state_shorts() == 'closed' or get_position_state_longs() == 'opened_long':
         if not pd.isna(current_order_timestamp):
 
             if current_signal != last_signal:
@@ -182,5 +183,5 @@ def send_buy_sell_orders(
         else:
             print('Shorts: No new orders')
     else:
-        print('Shorts: There is an open position. No new signals...'.upper())
+        print('Shorts: There is an open short position. No new short signals...'.upper())
     return buy_signal, sell_signal

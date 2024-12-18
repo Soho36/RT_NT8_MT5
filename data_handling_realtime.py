@@ -34,7 +34,8 @@ nt8_buy_sell_signals_for_path = (
 
 list_of_orders_path = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\list_of_orders.csv'
 
-position_state_path = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\position_state.txt'
+position_state_longs_path = 'position_state_longs.txt'
+position_state_shorts_path = 'position_state_shorts.txt'
 
 current_order_direction_path = 'C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\current_order_direction.txt'
 
@@ -177,8 +178,14 @@ def append_new_levels(file_path, new_levels):
 
 
 # Tracks if there is an open position
-def get_position_state():
-    with open(position_state_path, 'r', encoding='utf-8') as file:
+def get_position_state_shorts():
+    with open(position_state_shorts_path, 'r', encoding='utf-8') as file:
+        state = file.read()
+        return state
+
+
+def get_position_state_longs():
+    with open(position_state_longs_path, 'r', encoding='utf-8') as file:
         state = file.read()
         return state
 

@@ -41,8 +41,10 @@ namespace NinjaTrader.NinjaScript.Strategies
 		private Order longOrder3;
 		
 		private string lastPositionState = "closed"; // Tracks the last written position state
-		private string positionStateFilePath = "C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\position_state.txt";		
+		
+		// private string positionStateFilePath = "C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\position_state.txt";		
 		private string activeOrdersFilePath = "C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\current_order_direction.txt";
+		private string positionStateFilePath = "C:\\Users\\Liikurserv\\PycharmProjects\\RT_Ninja\\position_state_longs.txt";
 		
 		// Declare a Dictionary to Track Order Ages
 		private Dictionary<string, int> orderCreationCandle = new Dictionary<string, int>();
@@ -203,8 +205,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 				currentPositionState = "closed";
 			else if (Position.MarketPosition == MarketPosition.Long)
 				currentPositionState = "opened_long";
-			else if (Position.MarketPosition == MarketPosition.Short)
-				currentPositionState = "opened_short";
+			/* else if (Position.MarketPosition == MarketPosition.Short)
+				currentPositionState = "opened_short"; */
 			else
 				return; // Safety check, no action for unknown market position
 
