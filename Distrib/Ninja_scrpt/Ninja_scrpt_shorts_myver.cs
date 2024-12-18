@@ -191,14 +191,22 @@ namespace NinjaTrader.NinjaScript.Strategies
 		        }
 		    }
 		}
-    
-
+		
 		protected override void OnExecutionUpdate(Cbi.Execution execution, string executionId, double price, int quantity, MarketPosition marketPosition, string orderId, DateTime time)
 		{
 			base.OnExecutionUpdate(execution, executionId, price, quantity, marketPosition, orderId, time);
 
-			// Check the current position state
-			string currentPositionState = Position.MarketPosition == MarketPosition.Flat ? "closed" : "opened";
+			// Determine the position state with direction
+			string currentPositionState;
+
+			if (Position.MarketPosition == MarketPosition.Flat)
+				currentPositionState = "closed";
+			else if (Position.MarketPosition == MarketPosition.Long)
+				currentPositionState = "opened_long";
+			else if (Position.MarketPosition == MarketPosition.Short)
+				currentPositionState = "opened_short";
+			else
+				return; // Safety check, no action for unknown market position
 
 			// Write to the file only if the state has changed
 			if (currentPositionState != lastPositionState)
@@ -215,6 +223,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 				}
 			}
 		}
+    
 		protected override void OnOrderUpdate(Order order, double limitPrice, double stopPrice, int quantity, int filled, double averageFillPrice, OrderState orderState, DateTime time, ErrorCode error, string comment)
 		{
 			try

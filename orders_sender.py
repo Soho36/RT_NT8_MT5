@@ -1,9 +1,13 @@
 import winsound
 import pandas as pd
 from datetime import datetime
-from data_handling_realtime import (save_order_parameters_to_file, get_current_pending_order_direction,
-                                    save_list_of_orders_to_file, get_position_state)
-import time
+from data_handling_realtime import (
+    save_order_parameters_to_file,
+    # get_current_pending_order_direction,
+    save_list_of_orders_to_file,
+    get_position_state
+)
+# import time
 
 
 def last_candle_ohlc(output_df_with_levels):
@@ -51,7 +55,7 @@ def send_buy_sell_orders(
     # +------------------------------------------------------------------+
     # BUY ORDER
     # +------------------------------------------------------------------+
-    if get_position_state() == '' or get_position_state() == 'closed':
+    if get_position_state() == '' or get_position_state() == 'closed' or get_position_state() == 'opened_short':
         if not pd.isna(current_order_timestamp):
             if current_signal != last_signal:
                 # If time difference between current and last order is positive then it's accepted:
@@ -77,7 +81,7 @@ def send_buy_sell_orders(
 
                         line_order_parameters_nt8 = \
                             f'Buy, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}, {take_profit_price_3}'
-                        line_order_cancel = 'cancel'
+                        # line_order_cancel = 'cancel'
 
                         # if get_current_pending_order_direction() == 'sell':   # If there is an active sell order:
                         #     print('Cancelling previous order...')
@@ -117,7 +121,7 @@ def send_buy_sell_orders(
     # +------------------------------------------------------------------+
     # SELL ORDER
     # +------------------------------------------------------------------+
-    if get_position_state() == '' or get_position_state() == 'closed':
+    if get_position_state() == '' or get_position_state() == 'closed' or get_position_state() == 'opened_long':
         if not pd.isna(current_order_timestamp):
 
             if current_signal != last_signal:
@@ -144,7 +148,7 @@ def send_buy_sell_orders(
 
                         line_order_parameters_nt8 = \
                             f'Sell, {stop_market_price}, {stop_loss_price}, {take_profit_price}, {take_profit_price_2}, {take_profit_price_3}'
-                        line_order_cancel = 'cancel'
+                        # line_order_cancel = 'cancel'
 
                         # if get_current_pending_order_direction() == 'buy':                # If there is an active order:
                         #     print('Cancelling previous order...')
