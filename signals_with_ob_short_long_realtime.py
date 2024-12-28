@@ -121,10 +121,17 @@ def level_rejection_signals(
                                     # OB candle - look for every green candle below SR level
                                     for subsequent_index in range(index + 1, len(output_df_with_levels)):
                                         potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
+                                        potential_ob_candle_open = potential_ob_candle['Open']
+                                        potential_ob_candle_high = potential_ob_candle['High']
+                                        potential_ob_candle_low = potential_ob_candle['Low']
+                                        potential_ob_candle_close = potential_ob_candle['Close']
+                                        potential_ob_body = abs(potential_ob_candle_open - potential_ob_candle_close)
 
                                         potential_ob_candle_center = (
-                                                potential_ob_candle['High'] - ((potential_ob_candle['High'] - potential_ob_candle['Low'])/2)
+                                                potential_ob_candle_high - ((potential_ob_candle_high - potential_ob_candle_low)/2)
                                         )
+                                        potential_ob_doji = ((potential_ob_body * 100) /
+                                                             (potential_ob_candle_high - potential_ob_candle_low))
 
                                         # Convert to datetime for time calculations
                                         potential_ob_time = pd.to_datetime(potential_ob_candle['Time'])
@@ -162,20 +169,27 @@ def level_rejection_signals(
                                                     f"Time: {potential_ob_time}"
                                                 )
                                                 if green_candle_high - green_candle_low <= ob_candle_size:
-                                                    print('SEND STOPMARKET.1A')
-                                                    signal = f'-100+{subsequent_index}'
+                                                    if potential_ob_doji >= 15:
+                                                        if potential_ob_body >= 5:
+                                                            print('SEND STOPMARKET.1A')
+                                                            signal = f'-100+{subsequent_index}'
 
-                                                    signals_counter += 1
+                                                            signals_counter += 1
 
-                                                    s_signal, n_index, t_price, s_time = signal_triggered_output(
-                                                        subsequent_index,
-                                                        potential_ob_time,
-                                                        green_candle_low,
-                                                        trade_type,
-                                                        side,
-                                                        signal,
-                                                        signals_counter
-                                                    )
+                                                            s_signal, n_index, t_price, s_time = signal_triggered_output(
+                                                                subsequent_index,
+                                                                potential_ob_time,
+                                                                green_candle_low,
+                                                                trade_type,
+                                                                side,
+                                                                signal,
+                                                                signals_counter
+                                                            )
+                                                        else:
+                                                            print(
+                                                                f"Green candle (has too small body {potential_ob_body})")
+                                                    else:
+                                                        print(f"Green candle is doji (has body {potential_ob_doji})%")
                                                 else:
                                                     print(f"Green candle is bigger than max size ({ob_candle_size})")
                                             else:
@@ -204,12 +218,20 @@ def level_rejection_signals(
                                 for subsequent_index in range(index + 1, len(output_df_with_levels)):
 
                                     potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
+                                    potential_ob_candle_open = potential_ob_candle['Open']
+                                    potential_ob_candle_high = potential_ob_candle['High']
+                                    potential_ob_candle_low = potential_ob_candle['Low']
+                                    potential_ob_candle_close = potential_ob_candle['Close']
+                                    potential_ob_body = abs(potential_ob_candle_open - potential_ob_candle_close)
 
                                     potential_ob_candle_center = (
                                             potential_ob_candle['High'] - (
                                                 (potential_ob_candle['High'] - potential_ob_candle['Low']) / 2)
                                     )
 
+                                    potential_ob_doji = (
+                                                (potential_ob_body * 100) /
+                                                (potential_ob_candle_high - potential_ob_candle_low))
                                     # Convert to datetime for time calculations
                                     potential_ob_time = pd.to_datetime(potential_ob_candle['Time'])
 
@@ -253,19 +275,26 @@ def level_rejection_signals(
                                                 f"Time: {potential_ob_time}"
                                             )
                                             if green_candle_high - green_candle_low <= ob_candle_size:
-                                                print('SEND STOPMARKET.1B')
-                                                signal = f'-100+{subsequent_index}'
-                                                signals_counter += 1
+                                                if potential_ob_doji >= 15:
+                                                    if potential_ob_body >= 5:
+                                                        print('SEND STOPMARKET.1B')
+                                                        signal = f'-100+{subsequent_index}'
+                                                        signals_counter += 1
 
-                                                s_signal, n_index, t_price, s_time = signal_triggered_output(
-                                                    subsequent_index,
-                                                    potential_ob_time,
-                                                    green_candle_low,
-                                                    trade_type,
-                                                    side,
-                                                    signal,
-                                                    signals_counter
-                                                )
+                                                        s_signal, n_index, t_price, s_time = signal_triggered_output(
+                                                            subsequent_index,
+                                                            potential_ob_time,
+                                                            green_candle_low,
+                                                            trade_type,
+                                                            side,
+                                                            signal,
+                                                            signals_counter
+                                                        )
+                                                    else:
+                                                        print(
+                                                            f"Green candle (has too small body {potential_ob_body})")
+                                                else:
+                                                    print(f"Green candle is doji (has too small body {potential_ob_doji})%")
                                             else:
                                                 print(f"Green candle is bigger than max size ({ob_candle_size})")
                                         else:
@@ -297,11 +326,19 @@ def level_rejection_signals(
                                     for subsequent_index in range(index + 1, len(output_df_with_levels)):
 
                                         potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
+                                        potential_ob_candle_open = potential_ob_candle['Open']
+                                        potential_ob_candle_high = potential_ob_candle['High']
+                                        potential_ob_candle_low = potential_ob_candle['Low']
+                                        potential_ob_candle_close = potential_ob_candle['Close']
+                                        potential_ob_body = abs(potential_ob_candle_open - potential_ob_candle_close)
 
                                         potential_ob_candle_center = (
                                                 potential_ob_candle['High'] - (
                                                     (potential_ob_candle['High'] - potential_ob_candle['Low']) / 2)
                                         )
+                                        potential_ob_doji = (
+                                                    (potential_ob_body * 100) /
+                                                    (potential_ob_candle_high - potential_ob_candle_low))
                                         # Convert to datetime for time calculations
                                         potential_ob_time = pd.to_datetime(potential_ob_candle['Time'])
                                         # Calculate time difference between the current potential candle
@@ -342,19 +379,26 @@ def level_rejection_signals(
                                                     f"Time: {potential_ob_time}"
                                                 )
                                                 if red_candle_high - red_candle_low <= ob_candle_size:
-                                                    print('SEND STOPMARKET.2A')
-                                                    signal = f'100+{subsequent_index}'
-                                                    signals_counter += 1
+                                                    if potential_ob_doji >= 15:
+                                                        if potential_ob_body >= 5:
+                                                            print('SEND STOPMARKET.2A')
+                                                            signal = f'100+{subsequent_index}'
+                                                            signals_counter += 1
 
-                                                    s_signal, n_index, t_price, s_time = signal_triggered_output(
-                                                        subsequent_index,
-                                                        potential_ob_time,
-                                                        red_candle_high,
-                                                        trade_type,
-                                                        side,
-                                                        signal,
-                                                        signals_counter
-                                                    )
+                                                            s_signal, n_index, t_price, s_time = signal_triggered_output(
+                                                                subsequent_index,
+                                                                potential_ob_time,
+                                                                red_candle_high,
+                                                                trade_type,
+                                                                side,
+                                                                signal,
+                                                                signals_counter
+                                                            )
+                                                        else:
+                                                            print(
+                                                                f"Red candle (has too small body {potential_ob_body})")
+                                                    else:
+                                                        print(f"Red candle is doji (has body {potential_ob_doji})%")
                                                 else:
                                                     print(f"Red candle is bigger than max size ({ob_candle_size})")
                                             else:
@@ -381,12 +425,19 @@ def level_rejection_signals(
                                 for subsequent_index in range(index + 1, len(output_df_with_levels)):
 
                                     potential_ob_candle = output_df_with_levels.iloc[subsequent_index]
+                                    potential_ob_candle_open = potential_ob_candle['Open']
+                                    potential_ob_candle_high = potential_ob_candle['High']
+                                    potential_ob_candle_low = potential_ob_candle['Low']
+                                    potential_ob_candle_close = potential_ob_candle['Close']
+                                    potential_ob_body = abs(potential_ob_candle_open - potential_ob_candle_close)
 
                                     potential_ob_candle_center = (
                                             potential_ob_candle['High'] - (
                                                 (potential_ob_candle['High'] - potential_ob_candle['Low']) / 2)
                                     )
-
+                                    potential_ob_doji = (
+                                                (potential_ob_body * 100) /
+                                                (potential_ob_candle_high - potential_ob_candle_low))
                                     # Convert to datetime for time calculations
                                     potential_ob_time = pd.to_datetime(potential_ob_candle['Time'])
 
@@ -430,19 +481,26 @@ def level_rejection_signals(
                                                 f"Time: {potential_ob_time}"
                                             )
                                             if red_candle_high - red_candle_low <= ob_candle_size:
-                                                print('SEND STOPMARKET.2B')
-                                                signal = f'100+{subsequent_index}'
-                                                signals_counter += 1
+                                                if potential_ob_doji >= 15:
+                                                    if potential_ob_body >= 5:
+                                                        print('SEND STOPMARKET.2B')
+                                                        signal = f'100+{subsequent_index}'
+                                                        signals_counter += 1
 
-                                                s_signal, n_index, t_price, s_time = signal_triggered_output(
-                                                    subsequent_index,
-                                                    potential_ob_time,
-                                                    red_candle_high,
-                                                    trade_type,
-                                                    side,
-                                                    signal,
-                                                    signals_counter
-                                                )
+                                                        s_signal, n_index, t_price, s_time = signal_triggered_output(
+                                                            subsequent_index,
+                                                            potential_ob_time,
+                                                            red_candle_high,
+                                                            trade_type,
+                                                            side,
+                                                            signal,
+                                                            signals_counter
+                                                        )
+                                                    else:
+                                                        print(
+                                                            f"Red candle (has too small body {potential_ob_body})")
+                                                else:
+                                                    print(f"Red candle is doji (has body {potential_ob_doji})%")
                                             else:
                                                 print(f"Red candle is bigger than max size ({ob_candle_size})")
                                         else:
